@@ -36,20 +36,21 @@ func Reduce[A, B any](fn func(B, A) B, xs []A, initValue B) B {
 
 // Apply (a.k.a. "map"), applies a unary function to each element of a slice.
 func Apply[A, B any](fn func(A) B, xs []A) []B {
-	reducer := func(ys []B, x A) []B {
-		return append(ys, fn(x))
+	var ys = make([]B, len(xs))
+	for i, x := range xs {
+		ys[i] = fn(x)
 	}
-	return Reduce(reducer, xs, make([]B, 0))
+	return ys
 }
 
 // Filter, applied to a predicate and a slice, filters the slice of those
 // elements that satisfy the predicate.
 func Filter[A any](fn func(A) bool, xs []A) []A {
-	reducer := func(ys []A, x A) []A {
+	var ys = make([]A, 0, len(xs)/2)
+	for _, x := range xs {
 		if fn(x) {
-			return append(ys, x)
+			ys = append(ys, x)
 		}
-		return ys
 	}
-	return Reduce(reducer, xs, make([]A, 0))
+	return ys
 }

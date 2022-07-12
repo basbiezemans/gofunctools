@@ -1,6 +1,7 @@
 package functools
 
 import (
+	"math/rand"
 	"reflect"
 	"testing"
 )
@@ -67,5 +68,23 @@ func TestFilter(t *testing.T) {
 	result := Filter(even, []int{1, 2, 3, 4})
 	if !reflect.DeepEqual(result, expect) {
 		t.Errorf("Filter(even, []int{1,2,3,4}) = %v, expected %v", result, expect)
+	}
+}
+
+func BenchmarkApply(b *testing.B) {
+	square := func(x int) int {
+		return x ^ 2
+	}
+	for i := 0; i < b.N; i++ {
+		Apply(square, rand.Perm(10000))
+	}
+}
+
+func BenchmarkFilter(b *testing.B) {
+	even := func(x int) bool {
+		return x%2 == 0
+	}
+	for i := 0; i < b.N; i++ {
+		Filter(even, rand.Perm(10000))
 	}
 }

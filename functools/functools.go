@@ -54,3 +54,45 @@ func Filter[A any](fn func(A) bool, xs []A) []A {
 	}
 	return ys
 }
+
+// DropWhile, applied to a predicate and a slice, drops elements from the slice
+// as long as the predicate is true.
+func DropWhile[A any](fn func(A) bool, xs []A) []A {
+	for i, x := range xs {
+		if !fn(x) {
+			return xs[i:]
+		}
+	}
+	return []A{}
+}
+
+// TakeWhile, applied to a predicate and a slice, takes elements from the slice
+// as long as the predicate is true.
+func TakeWhile[A any](fn func(A) bool, xs []A) []A {
+	for i, x := range xs {
+		if !fn(x) {
+			return xs[:i]
+		}
+	}
+	return xs
+}
+
+// ZipWith, applied to a binary function and two slices, combines elements from
+// the two slices in a pairwise fashion. If one input slice is shorter than the
+// other, excess elements of the longer slice are discarded.
+func ZipWith[A, B, C any](fn func(A, B) C, xs []A, ys []B) []C {
+	var n = min(len(xs), len(ys))
+	var zs = make([]C, n)
+	for i := 0; i < n; i++ {
+		zs[i] = fn(xs[i], ys[i])
+	}
+	return zs
+}
+
+// Returns the smaller of its two arguments.
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}

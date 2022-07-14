@@ -1,7 +1,6 @@
 package functools
 
 import (
-	"math/rand"
 	"reflect"
 	"testing"
 )
@@ -49,6 +48,18 @@ func TestReduce(t *testing.T) {
 	}
 }
 
+func TestReduceRight(t *testing.T) {
+	append := func(ys []int, x int) []int {
+		return append(ys, x)
+	}
+	data := []int{1, 2, 3, 4}
+	expect := []int{4, 3, 2, 1}
+	result := ReduceRight(append, data, []int{})
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf("ReduceRight(append, %v, []int{}) = %d, expected %d", data, result, expect)
+	}
+}
+
 func TestApply(t *testing.T) {
 	double := func(x int) int {
 		return 2 * x
@@ -68,24 +79,6 @@ func TestFilter(t *testing.T) {
 	result := Filter(even, []int{1, 2, 3, 4})
 	if !reflect.DeepEqual(result, expect) {
 		t.Errorf("Filter(even, []int{1,2,3,4}) = %v, expected %v", result, expect)
-	}
-}
-
-func BenchmarkApply(b *testing.B) {
-	square := func(x int) int {
-		return x ^ 2
-	}
-	for i := 0; i < b.N; i++ {
-		Apply(square, rand.Perm(10000))
-	}
-}
-
-func BenchmarkFilter(b *testing.B) {
-	even := func(x int) bool {
-		return x%2 == 0
-	}
-	for i := 0; i < b.N; i++ {
-		Filter(even, rand.Perm(10000))
 	}
 }
 
@@ -141,8 +134,8 @@ func TestZipWith(t *testing.T) {
 		t.Errorf("ZipWith(multiply, %v, %v) = %v, expected %v", t1_slice1, t1_slice2, t1_result, t1_expect)
 	}
 	type DataPoint struct {
-		date string  "ISO 8601"
-		meas float64 "measurement"
+		date string
+		meas float64
 	}
 	makeDataPoint := func(date string, meas float64) DataPoint {
 		return DataPoint{date, meas}

@@ -34,6 +34,18 @@ func Reduce[A, B any](fn func(B, A) B, xs []A, initValue B) B {
 	return acc
 }
 
+// ReduceRight, applied to a reducer function and a slice, reduces the slice to
+// a single value. It is also known as a right fold, because it "folds" a data
+// structure from right to left.
+func ReduceRight[A, B any](fn func(B, A) B, xs []A, initValue B) B {
+	var acc = initValue
+	var n = len(xs) - 1
+	for i := range xs {
+		acc = fn(acc, xs[n-i])
+	}
+	return acc
+}
+
 // Apply (a.k.a. "map"), applies a unary function to each element of a slice.
 func Apply[A, B any](fn func(A) B, xs []A) []B {
 	var ys = make([]B, len(xs))

@@ -41,11 +41,32 @@ func TestReduce(t *testing.T) {
 	add := func(x, y int) int {
 		return x + y
 	}
-	expect := 10
-	result := Reduce(add, []int{1, 2, 3, 4}, 0)
-	if result != expect {
-		t.Errorf("Reduce(add, []int{1,2,3,4}, 0) = %d, expected %d", result, expect)
+	t1_expect := 10
+	t1_result := Reduce(add, []int{1, 2, 3, 4}, 0)
+	if t1_result != t1_expect {
+		t.Errorf("Reduce(add, []int{1,2,3,4}, 0) = %d, expected %d", t1_result, t1_expect)
 	}
+	even := func(x int) bool {
+		return x%2 == 0
+	}
+	// Remove negative numbers and split odd numbers into an even number and 1
+	posEvens := func(ys []int, x int) []int {
+		switch {
+		case x < 0:
+			return ys
+		case even(x):
+			return append(ys, x)
+		default:
+			return append(ys, x-1, 1)
+		}
+	}
+	t2_values := []int{5, 4, -3, 20, 17, -33, -4, 18}
+	t2_expect := []int{4, 1, 4, 20, 16, 1, 18}
+	t2_result := Reduce(posEvens, t2_values, []int{})
+	if !reflect.DeepEqual(t2_result, t2_expect) {
+		t.Errorf("Reduce(posEvens, %v, []int{}) = %v, expected %v", t2_values, t2_result, t2_expect)
+	}
+
 }
 
 func TestReduceRight(t *testing.T) {
@@ -142,9 +163,11 @@ func TestZipWith(t *testing.T) {
 	}
 	t2_slice1 := []string{"2021-01-15", "2021-01-16"}
 	t2_slice2 := []float64{0.981, 0.973}
-	t2_expect := []DataPoint{{"2021-01-15", 0.981}, {"2021-01-16", 0.973}}
+	t2_expect := []DataPoint{
+		{"2021-01-15", 0.981}, {"2021-01-16", 0.973},
+	}
 	t2_result := ZipWith(makeDataPoint, t2_slice1, t2_slice2)
 	if !reflect.DeepEqual(t2_result, t2_expect) {
-		t.Errorf(`ZipWith(makeDataPoint, %v, %v) = %v, expected %v`, t2_slice1, t2_slice2, t2_result, t2_expect)
+		t.Errorf("ZipWith(makeDataPoint, %v, %v) = %v, expected %v", t2_slice1, t2_slice2, t2_result, t2_expect)
 	}
 }

@@ -23,27 +23,50 @@ func All[A any](fn func(A) bool, xs []A) bool {
 	return true
 }
 
-// Reduce, applied to a reducer function and a slice, reduces the slice to a
-// single value. It is also known as a left fold, because it "folds" a data
-// structure from left to right.
-func Reduce[A, B any](fn func(B, A) B, xs []A, initValue B) B {
-	acc := initValue
+// FoldLeft, applied to a reducer function and a slice, reduces the slice to
+// a single value. This function "folds" a data structure from left to right,
+// starting with an initialization value.
+func FoldLeft[A, B any](fn func(B, A) B, initValue B, xs []A) B {
+	var acc = initValue
 	for _, x := range xs {
-		acc = fn(acc, x)
+		acc = fn(acc, x) // left-associative (B,A) -> B
 	}
 	return acc
 }
 
-// ReduceRight, applied to a reducer function and a slice, reduces the slice to
-// a single value. It is also known as a right fold, because it "folds" a data
-// structure from right to left.
-func ReduceRight[A, B any](fn func(B, A) B, xs []A, initValue B) B {
+// FoldRight, applied to a reducer function and a slice, reduces the slice to
+// a single value. This function "folds" a data structure from right to left,
+// starting with an initialization value.
+func FoldRight[A, B any](fn func(A, B) B, initValue B, xs []A) B {
 	var acc = initValue
 	var n = len(xs) - 1
 	for i := range xs {
-		acc = fn(acc, xs[n-i])
+		acc = fn(xs[n-i], acc) // right-associative (A,B) -> B
 	}
 	return acc
+}
+
+// ReduceLeft, applied to a reducer function and a non-empty slice, reduces the
+// slice to a single value. The accumulated value must be of the same type as
+// the slice elements. This function is non-total and will panic if the slice
+// happens to be empty.
+func ReduceLeft[A any](fn func(A, A) A, xs []A) A {
+	if len(xs) == 0 {
+		panic("empty slice")
+	}
+	return FoldLeft(fn, xs[0], xs[1:])
+}
+
+// ReduceRight, applied to a reducer function and a non-empty slice, reduces
+// the slice to a single value. The accumulated value must be of the same type
+// as the slice elements. This function is non-total and will panic if the
+// slice happens to be empty.
+func ReduceRight[A any](fn func(A, A) A, xs []A) A {
+	if len(xs) == 0 {
+		panic("empty slice")
+	}
+	var n = len(xs) - 1
+	return FoldRight(fn, xs[n], xs[:n])
 }
 
 // Apply (a.k.a. "map"), applies a unary function to each element of a slice.

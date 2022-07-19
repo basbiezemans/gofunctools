@@ -38,15 +38,31 @@ func TestAll(t *testing.T) {
 	}
 }
 
-func TestReduce(t *testing.T) {
-	add := func(x, y int) int {
-		return x + y
+func TestReduceLeft(t *testing.T) {
+	subtract := func(x, y int) int {
+		return x - y
 	}
-	t1_expect := 10
-	t1_result := Reduce(add, []int{1, 2, 3, 4}, 0)
-	if t1_result != t1_expect {
-		t.Errorf("Reduce(add, []int{1,2,3,4}, 0) = %d, expected %d", t1_result, t1_expect)
+	numbers := []int{1, 2, 3, 4}
+	expect := -8
+	result := ReduceLeft(subtract, numbers)
+	if result != expect {
+		t.Errorf("ReduceLeft(subtract, %v) = %d, expected %d", numbers, result, expect)
 	}
+}
+
+func TestReduceRight(t *testing.T) {
+	subtract := func(x, y int) int {
+		return x - y
+	}
+	numbers := []int{1, 2, 3, 4}
+	expect := -2
+	result := ReduceRight(subtract, numbers)
+	if result != expect {
+		t.Errorf("ReduceRight(subtract, %v) = %d, expected %d", numbers, result, expect)
+	}
+}
+
+func TestFoldLeft(t *testing.T) {
 	even := func(x int) bool {
 		return x%2 == 0
 	}
@@ -61,23 +77,26 @@ func TestReduce(t *testing.T) {
 			return append(ys, x-1, 1)
 		}
 	}
-	t2_values := []int{5, 4, -3, 20, 17, -33, -4, 18}
-	t2_expect := []int{4, 1, 4, 20, 16, 1, 18}
-	t2_result := Reduce(posEvens, t2_values, []int{})
-	if !reflect.DeepEqual(t2_result, t2_expect) {
-		t.Errorf("Reduce(posEvens, %v, []int{}) = %v, expected %v", t2_values, t2_result, t2_expect)
+	values := []int{5, 4, -3, 20, 17, -33, -4, 18}
+	expect := []int{4, 1, 4, 20, 16, 1, 18}
+	result := FoldLeft(posEvens, []int{}, values)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf("FoldLeft(posEvens, []int{}, %v) = %v, expected %v", values, result, expect)
 	}
 }
 
-func TestReduceRight(t *testing.T) {
-	append := func(ys []int, x int) []int {
+func TestFoldRight(t *testing.T) {
+	append := func(x int, ys []int) []int {
 		return append(ys, x)
 	}
-	data := []int{1, 2, 3, 4}
+	values := []int{1, 2, 3, 4}
 	expect := []int{4, 3, 2, 1}
-	result := ReduceRight(append, data, []int{})
+	reverse := func(numbers []int) []int {
+		return FoldRight(append, []int{}, numbers)
+	}
+	result := reverse(values)
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf("ReduceRight(append, %v, []int{}) = %d, expected %d", data, result, expect)
+		t.Errorf("FoldRight(append, []int{}, %v) = %v, expected %v", values, result, expect)
 	}
 }
 

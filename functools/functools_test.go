@@ -2,6 +2,7 @@ package functools
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -66,7 +67,6 @@ func TestReduce(t *testing.T) {
 	if !reflect.DeepEqual(t2_result, t2_expect) {
 		t.Errorf("Reduce(posEvens, %v, []int{}) = %v, expected %v", t2_values, t2_result, t2_expect)
 	}
-
 }
 
 func TestReduceRight(t *testing.T) {
@@ -169,5 +169,47 @@ func TestZipWith(t *testing.T) {
 	t2_result := ZipWith(makeDataPoint, t2_slice1, t2_slice2)
 	if !reflect.DeepEqual(t2_result, t2_expect) {
 		t.Errorf("ZipWith(makeDataPoint, %v, %v) = %v, expected %v", t2_slice1, t2_slice2, t2_result, t2_expect)
+	}
+}
+
+func TestPipe(t *testing.T) {
+	input := "  Lorem ipsum dolor sit amet, consectetur  "
+	expect := "lorem-ipsum-dolor-sit-amet-consectetur"
+	rep := strings.NewReplacer(",", "", ".", "", " ", "-")
+	slugify := Pipe(strings.TrimSpace, rep.Replace, strings.ToLower)
+	result := slugify(input)
+	if result != expect {
+		t.Errorf(`Pipe(s.TrimSpace, r.Replace, s.ToLower)("%s") = %s, expected %s`, input, result, expect)
+	}
+}
+
+func TestCompose(t *testing.T) {
+	input := "Lorem ipsum dolor sit amet, consectetur..."
+	expect := []string{
+		"lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
+	}
+	rep := strings.NewReplacer(",", "", ".", "")
+	split := func(sep string) func(string) []string {
+		return func(s string) []string {
+			return strings.Split(s, sep)
+		}
+	}
+	tokenize := Compose(split(" "), Compose(strings.ToLower, rep.Replace))
+	result := tokenize(input)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf(`Compose(split(" "), Compose(s.ToLower, r.Replace))("%s") = %v, expected %v`, input, result, expect)
+	}
+}
+
+func TestFlipCurry2(t *testing.T) {
+	input := "lorem ipsum dolor sit amet consectetur"
+	expect := []string{
+		"lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
+	}
+	split := Curry2(Flip(strings.Split))
+	tokenize := split(" ")
+	result := tokenize(input)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf(`Curry2(Flip(s.Split))(" ")("%s") = %v, expected %v`, input, result, expect)
 	}
 }

@@ -101,6 +101,44 @@ func ZipWith[A, B, C any](fn func(A, B) C, xs []A, ys []B) []C {
 	return zs
 }
 
+// Pipe chains multiple unary functions together. All functions have to accept
+// and return a value of the same type in order to pipe it from one function
+// to the next. Functions are evaluated from left to right.
+func Pipe[A any](funcs ...func(A) A) func(A) A {
+	return func(x A) A {
+		var acc = x
+		for _, fn := range funcs {
+			acc = fn(acc)
+		}
+		return acc
+	}
+}
+
+// Compose combines two simple, unary functions into a more complicated one.
+// Functions are evaluated from right to left, as in mathematics.
+func Compose[A, B, C any](f func(B) C, g func(A) B) func(A) C {
+	return func(x A) C {
+		return f(g(x))
+	}
+}
+
+// Curry2 converts an uncurried, binary function to a curried function.
+func Curry2[A, B, C any](fn func(A, B) C) func(A) func(B) C {
+	return func(x A) func(B) C {
+		return func(y B) C {
+			return fn(x, y)
+		}
+	}
+}
+
+// Flip converts a given binary function to a function with the order of
+// arguments flipped.
+func Flip[A, B, C any](fn func(A, B) C) func(B, A) C {
+	return func(x B, y A) C {
+		return fn(y, x)
+	}
+}
+
 // Returns the smaller of its two arguments.
 func min(a, b int) int {
 	if a < b {

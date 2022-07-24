@@ -112,9 +112,9 @@ func TakeWhile[A any](fn func(A) bool, xs []A) []A {
 	return xs
 }
 
-// ZipWith, applied to a binary function and two slices, combines elements from
-// the two slices in a pairwise fashion. If one input slice is shorter than the
-// other, excess elements of the longer slice are discarded.
+// ZipWith, applied to a combiner function and two slices, combines elements
+// from the two slices using the combiner function. If one input slice is
+// shorter than the other, excess elements of the longer slice are discarded.
 func ZipWith[A, B, C any](fn func(A, B) C, xs []A, ys []B) []C {
 	var n = min(len(xs), len(ys))
 	var zs = make([]C, n)
@@ -122,6 +122,18 @@ func ZipWith[A, B, C any](fn func(A, B) C, xs []A, ys []B) []C {
 		zs[i] = fn(xs[i], ys[i])
 	}
 	return zs
+}
+
+// UnzipWith, applied to a splitter function and a slice, splits elements in
+// the slice into two parts using the splitter function. Each part is directed
+// to a different slice.
+func UnzipWith[A, B, C any](fn func(A) (B, C), xs []A) ([]B, []C) {
+	var ys = make([]B, len(xs))
+	var zs = make([]C, len(xs))
+	for i, x := range xs {
+		ys[i], zs[i] = fn(x)
+	}
+	return ys, zs
 }
 
 // Pipe chains multiple unary functions together. All functions have to accept

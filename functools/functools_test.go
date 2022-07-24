@@ -123,7 +123,7 @@ func TestFilter(t *testing.T) {
 }
 
 func TestDropWhile(t *testing.T) {
-	lessThan := func(y int) func(x int) bool {
+	lessThan := func(y int) func(int) bool {
 		return func(x int) bool {
 			return x < y
 		}
@@ -143,7 +143,7 @@ func TestDropWhile(t *testing.T) {
 }
 
 func TestTakeWhile(t *testing.T) {
-	lessThan := func(y int) func(x int) bool {
+	lessThan := func(y int) func(int) bool {
 		return func(x int) bool {
 			return x < y
 		}
@@ -188,6 +188,26 @@ func TestZipWith(t *testing.T) {
 	t2_result := ZipWith(makeDataPoint, t2_slice1, t2_slice2)
 	if !reflect.DeepEqual(t2_result, t2_expect) {
 		t.Errorf("ZipWith(makeDataPoint, %v, %v) = %v, expected %v", t2_slice1, t2_slice2, t2_result, t2_expect)
+	}
+}
+
+func TestUnzipWith(t *testing.T) {
+	type DataPoint struct {
+		date string
+		meas float64
+	}
+	split := func(datum DataPoint) (string, float64) {
+		return datum.date, datum.meas
+	}
+	datapoints := []DataPoint{
+		{"2021-01-15", 0.981}, {"2021-01-16", 0.973},
+	}
+	expect1 := []string{"2021-01-15", "2021-01-16"}
+	expect2 := []float64{0.981, 0.973}
+
+	result1, result2 := UnzipWith(split, datapoints)
+	if !reflect.DeepEqual(result1, expect1) || !reflect.DeepEqual(result2, expect2) {
+		t.Errorf("UnZipWith(split, %v) = %v, %v, expected %v, %v", datapoints, result1, result2, expect1, expect2)
 	}
 }
 

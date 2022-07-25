@@ -151,9 +151,9 @@ func Pipe[A any](funcs ...func(A) A) func(A) A {
 
 // Compose combines two simple, unary functions into a more complicated one.
 // Functions are evaluated from right to left, as in mathematics.
-func Compose[A, B, C any](fn func(B) C, g func(A) B) func(A) C {
+func Compose[A, B, C any](f func(B) C, g func(A) B) func(A) C {
 	return func(x A) C {
-		return fn(g(x))
+		return f(g(x))
 	}
 }
 

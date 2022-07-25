@@ -166,6 +166,17 @@ func Curry2[A, B, C any](fn func(A, B) C) func(A) func(B) C {
 	}
 }
 
+// Curry3 converts an uncurried, ternary function to a curried function.
+func Curry3[A, B, C, D any](fn func(A, B, C) D) func(A) func(B) func(C) D {
+	return func(x A) func(B) func(C) D {
+		return func(y B) func(C) D {
+			return func(z C) D {
+				return fn(x, y, z)
+			}
+		}
+	}
+}
+
 // Flip converts a given binary function to a function with the order of
 // arguments flipped.
 func Flip[A, B, C any](fn func(A, B) C) func(B, A) C {

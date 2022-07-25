@@ -218,7 +218,7 @@ func TestPipe(t *testing.T) {
 	slugify := Pipe(strings.TrimSpace, rep.Replace, strings.ToLower)
 	result := slugify(input)
 	if result != expect {
-		t.Errorf(`Pipe(s.TrimSpace, r.Replace, s.ToLower)("%s") = %s, expected %s`, input, result, expect)
+		t.Errorf("Pipe(s.TrimSpace, r.Replace, s.ToLower)(%q) = %q, expected %q", input, result, expect)
 	}
 }
 
@@ -236,7 +236,7 @@ func TestCompose(t *testing.T) {
 	tokenize := Compose(split(" "), Compose(strings.ToLower, rep.Replace))
 	result := tokenize(input)
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Compose(split(" "), Compose(s.ToLower, r.Replace))("%s") = %v, expected %v`, input, result, expect)
+		t.Errorf(`Compose(split(" "), Compose(s.ToLower, r.Replace))(%q) = %#v, expected %#v`, input, result, expect)
 	}
 }
 
@@ -249,6 +249,16 @@ func TestFlipCurry2(t *testing.T) {
 	tokenize := split(" ")
 	result := tokenize(input)
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Curry2(Flip(s.Split))(" ")("%s") = %v, expected %v`, input, result, expect)
+		t.Errorf(`Curry2(Flip(s.Split))(" ")(%q) = %#v, expected %#v`, input, result, expect)
+	}
+}
+
+func TestCurry3(t *testing.T) {
+	input := "Lorem ipsum, dolor sit amet, consectetur."
+	expect := []string{"Lorem ipsum", " dolor sit amet, consectetur."}
+	split := Curry3(strings.SplitN)(input)(",")
+	result := split(2) // at most 2 substrings; the last substring is the unsplit remainder
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf(`Curry3(s.SplitN)(%q)(",")(2) = %#v, expected %#v`, input, result, expect)
 	}
 }

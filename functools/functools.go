@@ -29,7 +29,7 @@ func All[A any](fn func(A) bool, xs []A) bool {
 func FoldLeft[A, B any](fn func(B, A) B, initValue B, xs []A) B {
 	var acc = initValue
 	for _, x := range xs {
-		acc = fn(acc, x) // left-associative (B,A) -> B
+		acc = fn(acc, x) // left-associative
 	}
 	return acc
 }
@@ -41,7 +41,7 @@ func FoldRight[A, B any](fn func(A, B) B, initValue B, xs []A) B {
 	var acc = initValue
 	var n = len(xs) - 1
 	for i := range xs {
-		acc = fn(xs[n-i], acc) // right-associative (A,B) -> B
+		acc = fn(xs[n-i], acc) // right-associative
 	}
 	return acc
 }
@@ -150,10 +150,10 @@ func Pipe[A any](funcs ...func(A) A) func(A) A {
 }
 
 // Compose combines two simple, unary functions into a more complicated one.
-// Functions are evaluated from right to left, as in mathematics.
-func Compose[A, B, C any](f func(B) C, g func(A) B) func(A) C {
+// Functions are evaluated from right to left (f1 after f2).
+func Compose[A, B, C any](f1 func(B) C, f2 func(A) B) func(A) C {
 	return func(x A) C {
-		return f(g(x))
+		return f1(f2(x))
 	}
 }
 

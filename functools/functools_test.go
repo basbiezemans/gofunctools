@@ -246,8 +246,8 @@ func TestFlipCurry2(t *testing.T) {
 		"lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
 	}
 	split := Curry2(Flip(strings.Split))
-	tokenize := split(" ")
-	result := tokenize(input)
+	words := split(" ")
+	result := words(input)
 	if !reflect.DeepEqual(result, expect) {
 		t.Errorf(`Curry2(Flip(s.Split))(" ")(%q) = %#v, expected %#v`, input, result, expect)
 	}
@@ -255,9 +255,9 @@ func TestFlipCurry2(t *testing.T) {
 
 func TestCurry3(t *testing.T) {
 	input := "Lorem ipsum, dolor sit amet, consectetur."
-	expect := []string{"Lorem ipsum", " dolor sit amet, consectetur."}
-	split := Curry3(strings.SplitN)(input)(",")
-	result := split(2) // at most 2 substrings; the last substring is the unsplit remainder
+	expect := []string{"Lorem ipsum", "dolor sit amet, consectetur."}
+	splitN := Curry3(strings.SplitN)(input)(", ")
+	result := splitN(2) // at most 2 substrings; the last substring is the unsplit remainder
 	if !reflect.DeepEqual(result, expect) {
 		t.Errorf(`Curry3(s.SplitN)(%q)(",")(2) = %#v, expected %#v`, input, result, expect)
 	}

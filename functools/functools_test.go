@@ -262,3 +262,38 @@ func TestCurry3(t *testing.T) {
 		t.Errorf(`Curry3(s.SplitN)(%q)(",")(2) = %#v, expected %#v`, input, result, expect)
 	}
 }
+
+func TestFlipPartial1(t *testing.T) {
+	input := "lorem ipsum dolor sit amet consectetur"
+	expect := []string{
+		"lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
+	}
+	words := Partial1(Flip(strings.Split), " ")
+	result := words(input)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf(`Partial1(Flip(s.Split), " ")(%q) = %#v, expected %#v`, input, result, expect)
+	}
+}
+
+func TestPartial2(t *testing.T) {
+	input := "Lorem ipsum, dolor sit amet, consectetur."
+	expect := []string{"Lorem ipsum", "dolor sit amet, consectetur."}
+	splitN := Partial2(strings.SplitN, input, ", ")
+	result := splitN(2) // at most 2 substrings; the last substring is the unsplit remainder
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf(`Partial2(s.SplitN, %q, ",")(2) = %#v, expected %#v`, input, result, expect)
+	}
+}
+
+func TestPartition(t *testing.T) {
+	even := func(x int) bool {
+		return x%2 == 0
+	}
+	numbers := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	expect1 := []int{0, 2, 4, 6, 8}
+	expect2 := []int{1, 3, 5, 7, 9}
+	result1, result2 := Partition(even, numbers)
+	if !reflect.DeepEqual(result1, expect1) || !reflect.DeepEqual(result2, expect2) {
+		t.Errorf("Partition(even, %v) = %v, %v, expected %v, %v", numbers, result1, result2, expect1, expect2)
+	}
+}

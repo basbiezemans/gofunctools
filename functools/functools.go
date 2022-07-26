@@ -177,12 +177,43 @@ func Curry3[A, B, C, D any](fn func(A, B, C) D) func(A) func(B) func(C) D {
 	}
 }
 
+// Partial1 takes a binary function and a value, and returns a unary function
+// as its result.
+func Partial1[A, B, C any](fn func(A, B) C, x A) func(B) C {
+	return func(y B) C {
+		return fn(x, y)
+	}
+}
+
+// Partial2 takes a ternary function and two values, and returns a unary
+// function as its result.
+func Partial2[A, B, C, D any](fn func(A, B, C) D, x A, y B) func(C) D {
+	return func(z C) D {
+		return fn(x, y, z)
+	}
+}
+
 // Flip converts a given binary function to a function with the order of
 // arguments flipped.
 func Flip[A, B, C any](fn func(A, B) C) func(B, A) C {
 	return func(x B, y A) C {
 		return fn(y, x)
 	}
+}
+
+// Partition takes a predicate and a slice, and splits the elements into two
+// slices which do and do not satisfy the predicate.
+func Partition[A any](fn func(A) bool, xs []A) ([]A, []A) {
+	var ys = make([]A, 0, len(xs)/2)
+	var zs = make([]A, 0, len(xs)/2)
+	for _, x := range xs {
+		if fn(x) {
+			ys = append(ys, x)
+		} else {
+			zs = append(zs, x)
+		}
+	}
+	return ys, zs
 }
 
 // Returns the smaller of its two arguments.

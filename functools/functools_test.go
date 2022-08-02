@@ -318,3 +318,36 @@ func TestPartition(t *testing.T) {
 		t.Errorf("Partition(even, %v) = %v, %v, expected %v, %v", numbers, result1, result2, expect1, expect2)
 	}
 }
+
+func TestCount(t *testing.T) {
+	even := func(x int) bool {
+		return x%2 == 0
+	}
+	numbers := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	expect := 5
+	result := Count(even, numbers)
+	if result != expect {
+		t.Errorf("Count(even, %v) = %d, expected %d", numbers, result, expect)
+	}
+}
+
+func TestMapToSlice(t *testing.T) {
+	type Tuple2 struct {
+		fst string
+		snd int
+	}
+	asTuple2 := func(fst string, snd int) Tuple2 {
+		return Tuple2{fst, snd}
+	}
+	items := map[string]int{
+		"lorem": 1, "ipsum": 2, "dolor": 3,
+	}
+	expect := []Tuple2{
+		{"lorem", 1}, {"ipsum", 2}, {"dolor", 3},
+	}
+	result := MapToSlice(items, asTuple2)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf("TestMapToSlice(%v, asTuple2) = %v, expected %v", items, result, expect)
+	}
+}
+

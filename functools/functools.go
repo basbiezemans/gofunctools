@@ -219,6 +219,29 @@ func Partition[A any](fn func(A) bool, xs []A) ([]A, []A) {
 	return ys, zs
 }
 
+// Count, applied to a predicate and a slice, counts the number of elements
+// that satisfy the predicate.
+func Count[A any](fn func(A) bool, xs []A) int {
+	var k = 0
+	for _, x := range xs {
+		if fn(x) {
+			k += 1
+		}
+	}
+	return k
+}
+
+// MapToSlice, applied to a hash map and a combiner function, combines
+// key-value pairs as elements of a new slice.
+func MapToSlice[A comparable, B, C any](hm map[A]B, fn func(A, B) C) []C {
+	var xs = make([]C, 0, len(hm))
+	for k, v := range hm {
+		xs = append(xs, fn(k, v))
+
+	}
+	return xs
+}
+
 // Returns the smaller of its two arguments.
 func min(a, b int) int {
 	if a < b {

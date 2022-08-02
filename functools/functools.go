@@ -23,25 +23,25 @@ func All[A any](fn func(A) bool, xs []A) bool {
 	return true
 }
 
-// FoldLeft, applied to a reducer function and a slice, reduces the slice to
-// a single value. This function "folds" a data structure from left to right,
-// starting with an initialization value.
+// FoldLeft, applied to a reducer function, an initialization value and a slice,
+// reduces the slice to a single value. This function "folds" a slice from left
+// to right, starting with the initialization value.
 func FoldLeft[A, B any](fn func(B, A) B, initValue B, xs []A) B {
 	var acc = initValue
 	for _, x := range xs {
-		acc = fn(acc, x) // left-associative
+		acc = fn(acc, x)
 	}
 	return acc
 }
 
-// FoldRight, applied to a reducer function and a slice, reduces the slice to
-// a single value. This function "folds" a data structure from right to left,
-// starting with an initialization value.
+// FoldRight, applied to a reducer function, an initialization value and a slice,
+// reduces the slice to a single value. This function "folds" a slice from right
+// to left, starting with the initialization value.
 func FoldRight[A, B any](fn func(A, B) B, initValue B, xs []A) B {
 	var acc = initValue
 	var n = len(xs) - 1
 	for i := range xs {
-		acc = fn(xs[n-i], acc) // right-associative
+		acc = fn(xs[n-i], acc)
 	}
 	return acc
 }
@@ -193,8 +193,8 @@ func Partial2[A, B, C, D any](fn func(A, B, C) D, x A, y B) func(C) D {
 	}
 }
 
-// Flip converts a given binary function to a function with the order of
-// arguments flipped.
+// Flip converts a binary function to a function with the order of arguments
+// flipped.
 func Flip[A, B, C any](fn func(A, B) C) func(B, A) C {
 	return func(x B, y A) C {
 		return fn(y, x)

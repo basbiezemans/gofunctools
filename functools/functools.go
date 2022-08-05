@@ -72,11 +72,8 @@ func ReduceRight[A any](fn func(A, A) A, xs []A) A {
 // Apply (a.k.a. "map"), applies a unary function to each element of a slice.
 func Apply[A, B any](fn func(A) B, xs []A) []B {
 	var ys = make([]B, len(xs))
-	if len(xs) == 0 {
-		return ys
-	}
-	for i, j := 0, len(xs)-1; i <= len(xs)/2; i, j = i+1, j-1 {
-		ys[i], ys[j] = fn(xs[i]), fn(xs[j])
+	for i, x := range xs {
+		ys[i] = fn(x)
 	}
 	return ys
 }

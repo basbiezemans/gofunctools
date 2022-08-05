@@ -1,11 +1,9 @@
 package functools
 
 import (
-	"math/rand"
 	"reflect"
 	"strings"
 	"testing"
-	"time"
 )
 
 func TestAny(t *testing.T) {
@@ -106,29 +104,10 @@ func TestApply(t *testing.T) {
 	double := func(x int) int {
 		return 2 * x
 	}
-	halve := func(x int) int {
-		return x / 2
-	}
-	rand.Seed(time.Now().UnixNano())
-	// Returns a random int >= min, < max
-	randomInt := func(min, max int) int {
-		return min + rand.Intn(max-min)
-	}
-	randomIntSlice := func(n int) []int {
-		var xs = make([]int, n)
-		for i := range xs {
-			xs[i] = randomInt(-10, 100)
-		}
-		return xs
-	}
-	// Test multiple random int slices
-	for i, n := 0, 100; i < n; i++ {
-		orig := randomIntSlice(randomInt(0, 50))
-		doubled := Apply(double, orig)
-		expected := Apply(halve, doubled)
-		if !reflect.DeepEqual(orig, expected) {
-			t.Errorf("Apply(double, %v) = %v, expected %v", orig, doubled, expected)
-		}
+	expect := []int{2, 4, 6, 8}
+	result := Apply(double, []int{1, 2, 3, 4})
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf("Apply(double, []int{1,2,3,4}) = %v, expected %v", result, expect)
 	}
 }
 

@@ -187,12 +187,15 @@ func TestZipWith(t *testing.T) {
 	multiply := func(x, y int) int {
 		return x * y
 	}
-	t1_slice1 := []int{1, 2, 3, 4}
-	t1_slice2 := []int{1, 2, 3, 4, 5}
-	t1_expect := []int{1, 4, 9, 16}
-	t1_result := ZipWith(multiply, t1_slice1, t1_slice2)
-	if !reflect.DeepEqual(t1_result, t1_expect) {
-		t.Errorf("ZipWith(multiply, %v, %v) = %v, expected %v", t1_slice1, t1_slice2, t1_result, t1_expect)
+	testcases := []map[string][]int{
+		{"nums1": {1, 2, 3, 4}, "nums2": {1, 2, 3, 4, 5}, "expect": {1, 4, 9, 16}},
+		{"nums1": {1, 2, 3, 4}, "nums2": {}, "expect": {}},
+	}
+	for _, tc := range testcases {
+		result := ZipWith(multiply, tc["nums1"], tc["nums2"])
+		if !reflect.DeepEqual(result, tc["expect"]) {
+			t.Errorf("ZipWith(multiply, %v, %v) = %v, expected %v", tc["nums1"], tc["nums2"], result, tc["expect"])
+		}
 	}
 	type DataPoint struct {
 		date string
@@ -201,14 +204,14 @@ func TestZipWith(t *testing.T) {
 	makeDataPoint := func(date string, meas float64) DataPoint {
 		return DataPoint{date, meas}
 	}
-	t2_slice1 := []string{"2021-01-15", "2021-01-16"}
-	t2_slice2 := []float64{0.981, 0.973}
-	t2_expect := []DataPoint{
+	slice1 := []string{"2021-01-15", "2021-01-16"}
+	slice2 := []float64{0.981, 0.973}
+	expect := []DataPoint{
 		{"2021-01-15", 0.981}, {"2021-01-16", 0.973},
 	}
-	t2_result := ZipWith(makeDataPoint, t2_slice1, t2_slice2)
-	if !reflect.DeepEqual(t2_result, t2_expect) {
-		t.Errorf("ZipWith(makeDataPoint, %v, %v) = %v, expected %v", t2_slice1, t2_slice2, t2_result, t2_expect)
+	result := ZipWith(makeDataPoint, slice1, slice2)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf("ZipWith(makeDataPoint, %v, %v) = %v, expected %v", slice1, slice2, result, expect)
 	}
 }
 
@@ -350,4 +353,3 @@ func TestMapToSlice(t *testing.T) {
 		t.Errorf("TestMapToSlice(%v, asTuple2) = %v, expected %v", items, result, expect)
 	}
 }
-

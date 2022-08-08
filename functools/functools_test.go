@@ -2,6 +2,7 @@ package functools
 
 import (
 	"reflect"
+	"sort"
 	"strings"
 	"testing"
 )
@@ -328,7 +329,10 @@ func TestMapToSlice(t *testing.T) {
 		{"lorem", 1}, {"ipsum", 2}, {"dolor", 3},
 	}
 	result := MapToSlice(items, asTuple2)
+	sort.SliceStable(result, func(i, j int) bool {
+		return result[i].snd < result[j].snd
+	})
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf("TestMapToSlice(%v, asTuple2) = %v, expected %v", items, result, expect)
+		t.Errorf("MapToSlice(%v, asTuple2) = %v, expected %v", items, result, expect)
 	}
 }

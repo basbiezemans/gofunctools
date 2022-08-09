@@ -8,9 +8,6 @@ import (
 )
 
 func TestAny(t *testing.T) {
-	even := func(x int) bool {
-		return x%2 == 0
-	}
 	expect := true
 	result := Any(even, []int{1, 2, 3, 4})
 	if result != expect {
@@ -24,9 +21,6 @@ func TestAny(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
-	even := func(x int) bool {
-		return x%2 == 0
-	}
 	expect := true
 	result := All(even, []int{2, 4, 6, 8})
 	if result != expect {
@@ -40,9 +34,6 @@ func TestAll(t *testing.T) {
 }
 
 func TestReduceLeft(t *testing.T) {
-	subtract := func(x, y int) int {
-		return x - y
-	}
 	numbers := []int{1, 2, 3, 4}
 	expect := -8
 	result := ReduceLeft(subtract, numbers)
@@ -52,9 +43,6 @@ func TestReduceLeft(t *testing.T) {
 }
 
 func TestReduceRight(t *testing.T) {
-	subtract := func(x, y int) int {
-		return x - y
-	}
 	numbers := []int{1, 2, 3, 4}
 	expect := -2
 	result := ReduceRight(subtract, numbers)
@@ -64,9 +52,6 @@ func TestReduceRight(t *testing.T) {
 }
 
 func TestFoldLeft(t *testing.T) {
-	even := func(x int) bool {
-		return x%2 == 0
-	}
 	// Remove negative numbers and split odd numbers into an even number and 1
 	posEvens := func(ys []int, x int) []int {
 		switch {
@@ -102,9 +87,6 @@ func TestFoldRight(t *testing.T) {
 }
 
 func TestApply(t *testing.T) {
-	double := func(x int) int {
-		return 2 * x
-	}
 	expect := []int{2, 4, 6, 8}
 	result := Apply(double, []int{1, 2, 3, 4})
 	if !reflect.DeepEqual(result, expect) {
@@ -113,9 +95,6 @@ func TestApply(t *testing.T) {
 }
 
 func TestFilter(t *testing.T) {
-	even := func(x int) bool {
-		return x%2 == 0
-	}
 	expect := []int{2, 4}
 	result := Filter(even, []int{1, 2, 3, 4})
 	if !reflect.DeepEqual(result, expect) {
@@ -124,11 +103,6 @@ func TestFilter(t *testing.T) {
 }
 
 func TestDropWhile(t *testing.T) {
-	lessThan := func(y int) func(int) bool {
-		return func(x int) bool {
-			return x < y
-		}
-	}
 	data := []int{1, 2, 3, 4}
 	input := []int{3, 8, 1}
 	expect := [][]int{
@@ -144,11 +118,6 @@ func TestDropWhile(t *testing.T) {
 }
 
 func TestTakeWhile(t *testing.T) {
-	lessThan := func(y int) func(int) bool {
-		return func(x int) bool {
-			return x < y
-		}
-	}
 	data := []int{1, 2, 3, 4}
 	input := []int{3, 0, 5}
 	expect := [][]int{
@@ -164,9 +133,6 @@ func TestTakeWhile(t *testing.T) {
 }
 
 func TestZipWith(t *testing.T) {
-	multiply := func(x, y int) int {
-		return x * y
-	}
 	testcases := []map[string][]int{
 		{"nums1": {1, 2, 3, 4}, "nums2": {1, 2, 3, 4, 5}, "expect": {1, 4, 9, 16}},
 		{"nums1": {1, 2, 3, 4}, "nums2": {}, "expect": {}},
@@ -290,9 +256,6 @@ func TestPartial2(t *testing.T) {
 }
 
 func TestPartition(t *testing.T) {
-	even := func(x int) bool {
-		return x%2 == 0
-	}
 	numbers := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	expect1 := []int{0, 2, 4, 6, 8}
 	expect2 := []int{1, 3, 5, 7, 9}
@@ -303,9 +266,6 @@ func TestPartition(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
-	even := func(x int) bool {
-		return x%2 == 0
-	}
 	numbers := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	expect := 5
 	result := Count(even, numbers)
@@ -334,5 +294,33 @@ func TestMapToSlice(t *testing.T) {
 	})
 	if !reflect.DeepEqual(result, expect) {
 		t.Errorf("MapToSlice(%v, asTuple2) = %v, expected %v", items, result, expect)
+	}
+}
+
+// Helper functions
+
+func even(x int) bool {
+	return x%2 == 0
+}
+
+func double(x int) int {
+	return 2 * x
+}
+
+func add(x, y int) int {
+	return x + y
+}
+
+func multiply(x, y int) int {
+	return x * y
+}
+
+func subtract(x, y int) int {
+	return x - y
+}
+
+func lessThan(y int) func(int) bool {
+	return func(x int) bool {
+		return x < y
 	}
 }

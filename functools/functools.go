@@ -69,8 +69,13 @@ func ReduceRight[A any](fn func(A, A) A, xs []A) A {
 	return FoldRight(fn, xs[n], xs[:n])
 }
 
-// Apply (a.k.a. "map"), applies a unary function to each element of a slice.
+// Deprecated: ambiguous function name
 func Apply[A, B any](fn func(A) B, xs []A) []B {
+	return Map(fn, xs)
+}
+
+// Map applies a unary function to each element of a slice.
+func Map[A, B any](fn func(A) B, xs []A) []B {
 	var ys = make([]B, len(xs))
 	for i, x := range xs {
 		ys[i] = fn(x)

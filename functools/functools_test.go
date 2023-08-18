@@ -86,11 +86,11 @@ func TestFoldRight(t *testing.T) {
 	}
 }
 
-func TestApply(t *testing.T) {
+func TestMap(t *testing.T) {
 	expect := []int{2, 4, 6, 8}
-	result := Apply(double, []int{1, 2, 3, 4})
+	result := Map(double, []int{1, 2, 3, 4})
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf("Apply(double, []int{1,2,3,4}) = %v, expected %v", result, expect)
+		t.Errorf("Map(double, []int{1,2,3,4}) = %v, expected %v", result, expect)
 	}
 }
 

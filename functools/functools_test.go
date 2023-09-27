@@ -297,6 +297,20 @@ func TestMapToSlice(t *testing.T) {
 	}
 }
 
+func TestUnfold(t *testing.T) {
+	expect := []int{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}
+	result := Unfold(decrement, 10)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf("Unfold(decrement, 10) = %v, expected %v", result, expect)
+	}
+}
+
+func BenchmarkUnfold(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Unfold(decrement, 1000)
+	}
+}
+
 // Helper functions
 
 func even(x int) bool {
@@ -323,4 +337,11 @@ func lessThan(y int) func(int) bool {
 	return func(x int) bool {
 		return x < y
 	}
+}
+
+func decrement(x int) (int, int, bool) {
+	if x > 0 {
+		return x, x - 1, true
+	}
+	return 0, -1, false
 }

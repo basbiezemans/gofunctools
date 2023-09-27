@@ -244,6 +244,24 @@ func MapToSlice[A comparable, B, C any](hm map[A]B, fn func(A, B) C) []C {
 	return xs
 }
 
+// Unfold, builds a slice from a seed value. The function takes the element and
+// returns (,,false) if it is done producing the slice or returns (a,b,true),
+// in which case, a is appended to the slice and b is used as the next element.
+func Unfold[A, B any](fn func(B) (A, B, bool), initValue B) []A {
+	var xs = make([]A, 0)
+	var v = initValue
+	for true {
+		x, next, resume := fn(v)
+		if resume {
+			xs = append(xs, x)
+			v = next
+		} else {
+			break
+		}
+	}
+	return xs
+}
+
 // Returns the smaller of its two arguments.
 func min(a, b int) int {
 	if a < b {

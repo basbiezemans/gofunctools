@@ -2,9 +2,7 @@
 
 Package functools provides generic higher-order functions.
 
-**Documentation**
-
-Godoc: [functools package](https://godoc.org/github.com/basbiezemans/gofunctools/functools)
+[![Go Reference](https://pkg.go.dev/badge/github.com/basbiezemans/gofunctools.svg)](https://pkg.go.dev/github.com/basbiezemans/gofunctools)
 
 **Install**
 

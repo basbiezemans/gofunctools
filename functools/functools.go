@@ -249,15 +249,10 @@ func MapToSlice[A comparable, B, C any](hm map[A]B, fn func(A, B) C) []C {
 // in which case, a is appended to the slice and b is used as the next element.
 func Unfold[A, B any](fn func(B) (A, B, bool), initValue B) []A {
 	var xs = make([]A, 0)
-	var v = initValue
-	for true {
-		x, next, resume := fn(v)
-		if resume {
-			xs = append(xs, x)
-			v = next
-		} else {
-			break
-		}
+	var x, next, ok = fn(initValue)
+	for ok {
+		xs = append(xs, x)
+		x, next, ok = fn(next)
 	}
 	return xs
 }

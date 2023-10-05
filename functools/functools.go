@@ -239,7 +239,6 @@ func MapToSlice[A comparable, B, C any](hm map[A]B, fn func(A, B) C) []C {
 	var xs = make([]C, 0, len(hm))
 	for k, v := range hm {
 		xs = append(xs, fn(k, v))
-
 	}
 	return xs
 }

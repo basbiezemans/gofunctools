@@ -358,9 +358,9 @@ func double(x int) int {
 	return 2 * x
 }
 
-func add(x, y int) int {
-	return x + y
-}
+// func add(x, y int) int {
+// 	return x + y
+// }
 
 func multiply(x, y int) int {
 	return x * y

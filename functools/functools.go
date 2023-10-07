@@ -256,6 +256,42 @@ func Unfold[A, B any](fn func(B) (A, B, bool), initValue B) []A {
 	return xs
 }
 
+// Find, takes a predicate and a slice and returns the first element in the slice
+// matching the predicate (a,true), or (zero,false) if there is no such element.
+func Find[A comparable](fn func(A) bool, xs []A) (A, bool) {
+	var zero A
+	for _, x := range xs {
+		if fn(x) {
+			return x, true
+		}
+	}
+	return zero, false
+}
+
+// FindIndex, takes a predicate and a slice and returns the index of the first
+// element in the slice satisfying the predicate (index,true), or (-1,false) if
+// there is no such element.
+func FindIndex[A comparable](fn func(A) bool, xs []A) (int, bool) {
+	for i, x := range xs {
+		if fn(x) {
+			return i, true
+		}
+	}
+	return -1, false
+}
+
+// FindIndices, extends FindIndex, by returning the indices of all elements
+// satisfying the predicate, in ascending order.
+func FindIndices[A comparable](fn func(A) bool, xs []A) []int {
+	var ys = make([]int, 0)
+	for i, x := range xs {
+		if fn(x) {
+			ys = append(ys, i)
+		}
+	}
+	return ys
+}
+
 // Returns the smaller of its two arguments.
 func min(a, b int) int {
 	if a < b {

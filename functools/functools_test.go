@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 	"testing"
+	"unicode"
 )
 
 func TestAny(t *testing.T) {
@@ -311,6 +312,42 @@ func BenchmarkUnfold(b *testing.B) {
 	}
 }
 
+func TestFind(t *testing.T) {
+	input := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	n, ok := Find(greaterThan(4), input)
+	if !ok || n != 5 {
+		t.Errorf("Find(greaterThan(4), %v) = %d, expected 5", input, n)
+	}
+	n, ok = Find(lessThan(0), input)
+	if ok || n != 0 {
+		t.Errorf("Find(lessThan(0), %v) = %t, expected false", input, ok)
+	}
+}
+
+func TestFindIndex(t *testing.T) {
+	hello := "Hello World!"
+	input := []rune(hello)
+	i, ok := FindIndex(unicode.IsSpace, input)
+	if !ok || i != 5 {
+		t.Errorf("FindIndex(IsSpace, %q) = %d, expected 5", hello, i)
+	}
+	i, ok = FindIndex(unicode.IsDigit, input)
+	if ok || i != -1 {
+		t.Errorf("FindIndex(IsDigit, %q) = %t, expected false", hello, ok)
+	}
+}
+
+func TestFindIndices(t *testing.T) {
+	vowels := []rune("aeiou")
+	isVowel := isOneOf(vowels)
+	hello := "Hello World!"
+	expect := []int{1, 4, 7}
+	result := FindIndices(isVowel, []rune(hello))
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf("FindIndices(isVowel, %q) = %v, expected %v", hello, result, expect)
+	}
+}
+
 // Helper functions
 
 func even(x int) bool {
@@ -339,9 +376,26 @@ func lessThan(y int) func(int) bool {
 	}
 }
 
+func greaterThan(y int) func(int) bool {
+	return func(x int) bool {
+		return x > y
+	}
+}
+
 func decrement(x int) (int, int, bool) {
 	if x > 0 {
 		return x, x - 1, true
 	}
 	return 0, -1, false
+}
+
+func isOneOf[T comparable](xs []T) func(T) bool {
+	return func(e T) bool {
+		for _, x := range xs {
+			if x == e {
+				return true
+			}
+		}
+		return false
+	}
 }

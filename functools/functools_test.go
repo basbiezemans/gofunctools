@@ -2,6 +2,7 @@ package functools
 
 import (
 	"reflect"
+	"runtime"
 	"sort"
 	"strings"
 	"testing"
@@ -348,6 +349,44 @@ func TestFindIndices(t *testing.T) {
 	}
 }
 
+func TestScanLeft(t *testing.T) {
+	type TestCase struct {
+		callb  func(int, int) int
+		init   int
+		input  []int
+		expect []int
+	}
+	testcases := []TestCase{
+		{add, 0, []int{1, 2, 3, 4}, []int{0, 1, 3, 6, 10}},
+		{add, 42, []int{}, []int{42}},
+		{subtract, 100, []int{1, 2, 3, 4}, []int{100, 99, 97, 94, 90}},
+	}
+	errorMsg := "ScanLeft(%s, %v, %v) = %v, expected %v"
+	for _, test := range testcases {
+		result := ScanLeft(test.callb, test.init, test.input)
+		if !reflect.DeepEqual(result, test.expect) {
+			t.Errorf(errorMsg, funcName(test.callb), test.init, test.input, result, test.expect)
+		}
+	}
+	prepend := func(s string, r rune) string {
+		return string(r) + s
+	}
+	showRunes := func(rs []rune) []string {
+		var ys = make([]string, len(rs))
+		for i, r := range rs {
+			ys[i] = string(r)
+		}
+		return ys
+	}
+	expect := []string{"foo", "afoo", "bafoo", "cbafoo", "dcbafoo"}
+	init := "foo"
+	input := []rune{'a', 'b', 'c', 'd'}
+	result := ScanLeft(prepend, init, input)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf(errorMsg, "prepend", init, showRunes(input), result, expect)
+	}
+}
+
 // Helper functions
 
 func even(x int) bool {
@@ -358,9 +397,9 @@ func double(x int) int {
 	return 2 * x
 }
 
-// func add(x, y int) int {
-// 	return x + y
-// }
+func add(x, y int) int {
+	return x + y
+}
 
 func multiply(x, y int) int {
 	return x * y
@@ -398,4 +437,14 @@ func isOneOf[T comparable](xs []T) func(T) bool {
 		}
 		return false
 	}
+}
+
+func last[T any](xs []T) T {
+	return xs[len(xs)-1]
+}
+
+func funcName[T, U any](fn func(T, U) T) string {
+	var fptr = reflect.ValueOf(fn).Pointer()
+	var fname = runtime.FuncForPC(fptr).Name()
+	return last(strings.Split(fname, "."))
 }

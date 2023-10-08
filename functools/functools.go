@@ -292,6 +292,17 @@ func FindIndices[A comparable](fn func(A) bool, xs []A) []int {
 	return ys
 }
 
+// ScanLeft is similar to FoldLeft, but returns a list of successive reduced
+// values from the left.
+func ScanLeft[A, B any](fn func(B, A) B, initValue B, xs []A) []B {
+	var ys = make([]B, 1+len(xs))
+	ys[0] = initValue
+	for i, x := range xs {
+		ys[i+1] = fn(ys[i], x)
+	}
+	return ys
+}
+
 // Returns the smaller of its two arguments.
 func min(a, b int) int {
 	if a < b {

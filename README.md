@@ -7,6 +7,6 @@ Package functools provides generic higher-order functions.
 **Install**
 
 ```bash
-$ go get github.com/basbiezemans/gofunctools/functools
+go get github.com/basbiezemans/gofunctools/functools
 ```
 

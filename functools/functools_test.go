@@ -371,13 +371,6 @@ func TestScanLeft(t *testing.T) {
 	prepend := func(s string, r rune) string {
 		return string(r) + s
 	}
-	showRunes := func(rs []rune) []string {
-		var ys = make([]string, len(rs))
-		for i, r := range rs {
-			ys[i] = string(r)
-		}
-		return ys
-	}
 	expect := []string{"foo", "afoo", "bafoo", "cbafoo", "dcbafoo"}
 	init := "foo"
 	input := []rune{'a', 'b', 'c', 'd'}
@@ -408,13 +401,6 @@ func TestScanRight(t *testing.T) {
 	}
 	prepend := func(r rune, s string) string {
 		return string(r) + s
-	}
-	showRunes := func(rs []rune) []string {
-		var ys = make([]string, len(rs))
-		for i, r := range rs {
-			ys[i] = string(r)
-		}
-		return ys
 	}
 	expect := []string{"abcdfoo", "bcdfoo", "cdfoo", "dfoo", "foo"}
 	init := "foo"
@@ -464,6 +450,14 @@ func decrement(x int) (int, int, bool) {
 		return x, x - 1, true
 	}
 	return 0, -1, false
+}
+
+func showRunes(rs []rune) []string {
+	var ys = make([]string, len(rs))
+	for i, r := range rs {
+		ys[i] = string(r)
+	}
+	return ys
 }
 
 func isOneOf[T comparable](xs []T) func(T) bool {

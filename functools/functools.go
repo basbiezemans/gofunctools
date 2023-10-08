@@ -303,6 +303,18 @@ func ScanLeft[A, B any](fn func(B, A) B, initValue B, xs []A) []B {
 	return ys
 }
 
+// ScanRight is the right-to-left dual of ScanLeft. Note that the order of
+// parameters on the accumulating function are reversed compared to ScanLeft.
+func ScanRight[A, B any](fn func(A, B) B, initValue B, xs []A) []B {
+	var n = len(xs)
+	var ys = make([]B, 1+n)
+	ys[n] = initValue
+	for i := n; i > 0; i-- {
+		ys[i-1] = fn(xs[i-1], ys[i])
+	}
+	return ys
+}
+
 // Returns the smaller of its two arguments.
 func min(a, b int) int {
 	if a < b {

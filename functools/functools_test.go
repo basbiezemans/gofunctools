@@ -387,6 +387,44 @@ func TestScanLeft(t *testing.T) {
 	}
 }
 
+func TestScanRight(t *testing.T) {
+	type TestCase struct {
+		callb  func(int, int) int
+		init   int
+		input  []int
+		expect []int
+	}
+	testcases := []TestCase{
+		{add, 0, []int{1, 2, 3, 4}, []int{10, 9, 7, 4, 0}},
+		{add, 42, []int{}, []int{42}},
+		{subtract, 100, []int{1, 2, 3, 4}, []int{98, -97, 99, -96, 100}},
+	}
+	errorMsg := "ScanRight(%s, %v, %v) = %v, expected %v"
+	for _, test := range testcases {
+		result := ScanRight(test.callb, test.init, test.input)
+		if !reflect.DeepEqual(result, test.expect) {
+			t.Errorf(errorMsg, funcName(test.callb), test.init, test.input, result, test.expect)
+		}
+	}
+	prepend := func(r rune, s string) string {
+		return string(r) + s
+	}
+	showRunes := func(rs []rune) []string {
+		var ys = make([]string, len(rs))
+		for i, r := range rs {
+			ys[i] = string(r)
+		}
+		return ys
+	}
+	expect := []string{"abcdfoo", "bcdfoo", "cdfoo", "dfoo", "foo"}
+	init := "foo"
+	input := []rune{'a', 'b', 'c', 'd'}
+	result := ScanRight(prepend, init, input)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf(errorMsg, "prepend", init, showRunes(input), result, expect)
+	}
+}
+
 // Helper functions
 
 func even(x int) bool {

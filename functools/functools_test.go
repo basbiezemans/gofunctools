@@ -54,6 +54,25 @@ func TestReduceRight(t *testing.T) {
 }
 
 func TestFoldLeft(t *testing.T) {
+	type TestCase struct {
+		callb  func(int, int) int
+		init   int
+		input  []int
+		expect int
+	}
+	testcases := []TestCase{
+		{add, 0, []int{1, 2, 3, 4}, 10},
+		{add, 42, []int{}, 42},
+		{subtract, 100, []int{1, 2, 3, 4}, 90},
+	}
+	errorMsg := "FoldLeft(%s, %v, %v) = %v, expected %v"
+	for _, test := range testcases {
+		result := FoldLeft(test.callb, test.init, test.input)
+		if result != test.expect {
+			fn := funcName(test.callb)
+			t.Errorf(errorMsg, fn, test.init, test.input, result, test.expect)
+		}
+	}
 	// Remove negative numbers and split odd numbers into an even number and 1
 	posEvens := func(ys []int, x int) []int {
 		switch {
@@ -74,6 +93,25 @@ func TestFoldLeft(t *testing.T) {
 }
 
 func TestFoldRight(t *testing.T) {
+	type TestCase struct {
+		callb  func(int, int) int
+		init   int
+		input  []int
+		expect int
+	}
+	testcases := []TestCase{
+		{add, 0, []int{1, 2, 3, 4}, 10},
+		{add, 42, []int{}, 42},
+		{subtract, 100, []int{1, 2, 3, 4}, 98},
+	}
+	errorMsg := "FoldRight(%s, %v, %v) = %v, expected %v"
+	for _, test := range testcases {
+		result := FoldRight(test.callb, test.init, test.input)
+		if result != test.expect {
+			fn := funcName(test.callb)
+			t.Errorf(errorMsg, fn, test.init, test.input, result, test.expect)
+		}
+	}
 	append := func(x int, ys []int) []int {
 		return append(ys, x)
 	}

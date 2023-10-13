@@ -450,6 +450,22 @@ func TestScanRight(t *testing.T) {
 	}
 }
 
+func TestConcatMap(t *testing.T) {
+	testcases := []map[string][]int{
+		{"input": {}, "expect": {}},
+		{"input": {1, 2, 3}, "expect": {-1, 1, -2, 2, -3, 3}},
+	}
+	fn := func(i int) []int {
+		return []int{-i, i}
+	}
+	for _, tc := range testcases {
+		result := ConcatMap(fn, tc["input"])
+		if !reflect.DeepEqual(result, tc["expect"]) {
+			t.Errorf("ConcatMap(fn, %v) = %v, expected %v", tc["input"], result, tc["expect"])
+		}
+	}
+}
+
 // Helper functions
 
 func even(x int) bool {

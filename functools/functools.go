@@ -315,6 +315,16 @@ func ScanRight[A, B any](fn func(A, B) B, initValue B, xs []A) []B {
 	return ys
 }
 
+// ConcatMap applies a function, returning a slice, over a slice and concatenates
+// the results.
+func ConcatMap[A, B any](fn func(A) []B, xs []A) []B {
+	var ys = make([]B, 0)
+	for _, x := range xs {
+		ys = append(ys, fn(x)...)
+	}
+	return ys
+}
+
 // Returns the smaller of its two arguments.
 func min(a, b int) int {
 	if a < b {

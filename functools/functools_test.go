@@ -1,6 +1,7 @@
 package functools
 
 import (
+	"errors"
 	"reflect"
 	"runtime"
 	"sort"
@@ -509,12 +510,19 @@ func isOneOf[T comparable](xs []T) func(T) bool {
 	}
 }
 
-func last[T any](xs []T) T {
-	return xs[len(xs)-1]
+func last[T any](xs []T) (T, error) {
+	var zero T
+	if len(xs) > 0 {
+		return xs[len(xs)-1], nil
+	}
+	return zero, errors.New("empty slice")
 }
 
 func funcName[T, U any](fn func(T, U) T) string {
 	var fptr = reflect.ValueOf(fn).Pointer()
 	var fname = runtime.FuncForPC(fptr).Name()
-	return last(strings.Split(fname, "."))
+	if str, err := last(strings.Split(fname, ".")); err != nil {
+		return str
+	}
+	return "N/A"
 }

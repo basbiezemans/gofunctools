@@ -537,7 +537,7 @@ func last[T any](xs []T) (T, error) {
 func funcName[T, U any](fn func(T, U) T) string {
 	var fptr = reflect.ValueOf(fn).Pointer()
 	var fname = runtime.FuncForPC(fptr).Name()
-	if str, err := last(strings.Split(fname, ".")); err != nil {
+	if str, err := last(strings.Split(fname, ".")); err == nil {
 		return str
 	}
 	return "N/A"

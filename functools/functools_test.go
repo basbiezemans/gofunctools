@@ -315,7 +315,7 @@ func TestCount(t *testing.T) {
 	}
 }
 
-func TestMapToSlice(t *testing.T) {
+func TestHashMapToSlice(t *testing.T) {
 	type Tuple2 struct {
 		fst string
 		snd int
@@ -329,7 +329,7 @@ func TestMapToSlice(t *testing.T) {
 	expect := []Tuple2{
 		{"lorem", 1}, {"ipsum", 2}, {"dolor", 3},
 	}
-	result := MapToSlice(items, asTuple2)
+	result := HashMapToSlice(asTuple2, items)
 	sort.SliceStable(result, func(i, j int) bool {
 		return result[i].snd < result[j].snd
 	})
@@ -338,7 +338,7 @@ func TestMapToSlice(t *testing.T) {
 	}
 }
 
-func TestSliceToMap(t *testing.T) {
+func TestSliceToHashMap(t *testing.T) {
 	type Tuple2 struct {
 		fst string
 		snd int
@@ -352,7 +352,7 @@ func TestSliceToMap(t *testing.T) {
 	expect := map[string]int{
 		"lorem": 1, "ipsum": 2, "dolor": 3,
 	}
-	result := SliceToMap(items, kvSplit)
+	result := SliceToHashMap(kvSplit, items)
 	if !reflect.DeepEqual(result, expect) {
 		t.Errorf("SliceToMap(%v, kvSplit) = %v, expected %v", items, result, expect)
 	}

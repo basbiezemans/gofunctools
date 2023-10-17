@@ -233,9 +233,14 @@ func Count[A any](fn func(A) bool, xs []A) int {
 	return k
 }
 
-// MapToSlice, applied to a hash map and a combiner function, combines
-// key-value pairs as elements of a new slice.
+// Deprecated: use HashMapToSlice instead.
 func MapToSlice[A comparable, B, C any](hm map[A]B, fn func(A, B) C) []C {
+	return HashMapToSlice(fn, hm)
+}
+
+// HashMapToSlice, applied to a hash map and a combiner function, combines
+// key-value pairs as elements of a new slice.
+func HashMapToSlice[A comparable, B, C any](fn func(A, B) C, hm map[A]B) []C {
 	var xs = make([]C, 0, len(hm))
 	for k, v := range hm {
 		xs = append(xs, fn(k, v))
@@ -243,9 +248,14 @@ func MapToSlice[A comparable, B, C any](hm map[A]B, fn func(A, B) C) []C {
 	return xs
 }
 
-// SliceToMap, applied to a slice and a splitter function, creates a
-// hash map with elements from the slice splitted as key-value pairs.
+// Deprecated: use SliceToHashMap instead.
 func SliceToMap[A comparable, B, C any](xs []B, fn func(B) (A, C)) map[A]C {
+	return SliceToHashMap(fn, xs)
+}
+
+// SliceToHashMap, applied to a slice and a splitter function, creates a
+// hash map with elements from the slice splitted as key-value pairs.
+func SliceToHashMap[A comparable, B, C any](fn func(B) (A, C), xs []B) map[A]C {
 	var hm = make(map[A]C, len(xs))
 	for _, x := range xs {
 		k, v := fn(x)

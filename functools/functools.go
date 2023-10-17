@@ -243,6 +243,17 @@ func MapToSlice[A comparable, B, C any](hm map[A]B, fn func(A, B) C) []C {
 	return xs
 }
 
+// SliceToMap, applied to a slice and a splitter function, creates a
+// hash map with elements from the slice splitted as key-value pairs.
+func SliceToMap[A comparable, B, C any](xs []B, fn func(B) (A, C)) map[A]C {
+	var hm = make(map[A]C, len(xs))
+	for _, x := range xs {
+		k, v := fn(x)
+		hm[k] = v
+	}
+	return hm
+}
+
 // Unfold, builds a slice from a seed value. The function takes the element and
 // returns (,,false) if it is done producing the slice or returns (a,b,true),
 // in which case, a is appended to the slice and b is used as the next element.

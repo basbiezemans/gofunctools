@@ -338,6 +338,26 @@ func TestMapToSlice(t *testing.T) {
 	}
 }
 
+func TestSliceToMap(t *testing.T) {
+	type Tuple2 struct {
+		fst string
+		snd int
+	}
+	kvSplit := func(tuple Tuple2) (string, int) {
+		return tuple.fst, tuple.snd
+	}
+	items := []Tuple2{
+		{"lorem", 1}, {"ipsum", 2}, {"dolor", 3},
+	}
+	expect := map[string]int{
+		"lorem": 1, "ipsum": 2, "dolor": 3,
+	}
+	result := SliceToMap(items, kvSplit)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf("SliceToMap(%v, kvSplit) = %v, expected %v", items, result, expect)
+	}
+}
+
 func TestUnfold(t *testing.T) {
 	expect := []int{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}
 	result := Unfold(decrement, 10)

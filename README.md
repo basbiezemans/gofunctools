@@ -1,12 +1,12 @@
 # Golang functools
 
-Package functools provides generic higher-order functions. They can be used to build functions of functions in a concise manner. The goal is to combine proven functional programming concepts with Go's practical programming style.
+Package functools provides generic higher-order functions. They can be used to build functions of functions in a concise manner.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/basbiezemans/gofunctools.svg)](https://pkg.go.dev/github.com/basbiezemans/gofunctools/functools)
 
 ## Go version
 
-1.21 or later
+This package requires version 1.21 or later.
 
 ## Install
 
@@ -16,7 +16,7 @@ go get github.com/basbiezemans/gofunctools/functools
 
 ## Examples
 
-#### String sanitizer w/ Pipe
+#### String sanitizer with Pipe
 ```go
 replacer := strings.NewReplacer(",", "", ".", "")
 sanitize := Pipe(strings.TrimSpace, replacer.Replace, strings.ToLower)
@@ -27,7 +27,7 @@ fmt.Println(sanitize(text))
 
 // Output: "lorem ipsum dolor sit amet consectetur"
 ```
-#### String tokenizer w/ Curry2, Flip
+#### String tokenizer with Curry2, Flip
 ```go
 split := Curry2(Flip(strings.Split))
 words := split(" ")
@@ -38,11 +38,11 @@ fmt.Println(words(text))
 
 // Output: ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur"]
 ```
-#### Sanitizer-tokenizer w/ Partial1, Flip, Compose
+#### Sanitizer-tokenizer with Compose, Partial1, Flip
 ```go
 replacer := strings.NewReplacer(",", "", ".", "")
-words := Partial1(Flip(strings.Split), " ")
-tokenize := Compose(words, Compose(strings.ToLower, replacer.Replace))
+sanitize := Compose(strings.ToLower, replacer.Replace)
+tokenize := Compose(Partial1(Flip(strings.Split), " "), sanitize)
 
 text := "Lorem ipsum dolor sit amet, ...consectetur."
 
@@ -50,7 +50,7 @@ fmt.Println(tokenize(text))
 
 // Output: ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur"]
 ```
-#### Word frequency counter w/ Partial2, FoldLeft
+#### Word frequency counter with Partial2, FoldLeft
 ```go
 type frequency map[string]int
 

@@ -1,8 +1,8 @@
-# Golang functools
+# Go functools
 
 Package functools provides generic higher-order functions. They can be used to build functions of functions in a concise manner.
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/basbiezemans/gofunctools.svg)](https://pkg.go.dev/github.com/basbiezemans/gofunctools/functools)
+[![Go Reference](https://pkg.go.dev/badge/github.com/basbiezemans/gofunctools.svg)](https://pkg.go.dev/github.com/basbiezemans/gofunctools)
 
 ## Go version
 

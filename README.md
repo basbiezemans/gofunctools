@@ -1,6 +1,6 @@
 # Go functools
 
-Package functools provides generic higher-order functions. They can be used to build functions of functions in a concise manner.
+Package `funcs` provides generic higher-order functions. They can be used to build functions of functions in a concise manner.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/basbiezemans/gofunctools.svg)](https://pkg.go.dev/github.com/basbiezemans/gofunctools)
 
@@ -11,7 +11,7 @@ This package requires version 1.21 or later.
 ## Install
 
 ```bash
-go get github.com/basbiezemans/gofunctools/functools
+go get github.com/basbiezemans/gofunctools/funcs
 ```
 
 ## Examples

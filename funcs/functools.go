@@ -69,11 +69,6 @@ func ReduceRight[A any](fn func(A, A) A, xs []A) A {
 	return FoldRight(fn, xs[n], xs[:n])
 }
 
-// Deprecated: ambiguous function name
-func Apply[A, B any](fn func(A) B, xs []A) []B {
-	return Map(fn, xs)
-}
-
 // Map applies a unary function to each element of a slice.
 func Map[A, B any](fn func(A) B, xs []A) []B {
 	var ys = make([]B, len(xs))
@@ -233,11 +228,6 @@ func Count[A any](fn func(A) bool, xs []A) int {
 	return k
 }
 
-// Deprecated: use HashMapToSlice instead.
-func MapToSlice[A comparable, B, C any](hm map[A]B, fn func(A, B) C) []C {
-	return HashMapToSlice(fn, hm)
-}
-
 // HashMapToSlice, applied to a hash map and a combiner function, combines
 // key-value pairs as elements of a new slice.
 func HashMapToSlice[A comparable, B, C any](fn func(A, B) C, hm map[A]B) []C {
@@ -246,11 +236,6 @@ func HashMapToSlice[A comparable, B, C any](fn func(A, B) C, hm map[A]B) []C {
 		xs = append(xs, fn(k, v))
 	}
 	return xs
-}
-
-// Deprecated: use SliceToHashMap instead.
-func SliceToMap[A comparable, B, C any](xs []B, fn func(B) (A, C)) map[A]C {
-	return SliceToHashMap(fn, xs)
 }
 
 // SliceToHashMap, applied to a slice and a splitter function, creates a

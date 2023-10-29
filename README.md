@@ -42,7 +42,8 @@ fmt.Println(words(text))
 ```go
 replacer := strings.NewReplacer(",", "", ".", "")
 sanitize := Compose(strings.ToLower, replacer.Replace)
-tokenize := Compose(Partial1(Flip(strings.Split), " "), sanitize)
+splitstr := Partial1(Flip(strings.Split), " ")
+tokenize := Compose(splitstr, sanitize)
 
 text := "Lorem ipsum dolor sit amet, ...consectetur."
 

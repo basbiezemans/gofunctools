@@ -1,18 +1,12 @@
 # Go functools
 
-Package `funcs` provides generic higher-order functions. They can be used to build functions of functions in a concise manner.
+This package provides generic higher-order functions. They can be used to build functions of functions in a concise manner.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/basbiezemans/gofunctools.svg)](https://pkg.go.dev/github.com/basbiezemans/gofunctools)
 
 ## Go version
 
-This package requires version 1.21 or later.
-
-## Install
-
-```bash
-go get github.com/basbiezemans/gofunctools/funcs
-```
+This package requires Go version 1.21 or later.
 
 ## Examples
 
@@ -41,9 +35,10 @@ fmt.Println(words(text))
 #### Sanitizer-tokenizer with Compose, Partial1, Flip
 ```go
 replacer := strings.NewReplacer(",", "", ".", "")
-sanitize := Compose(strings.ToLower, replacer.Replace)
-splitstr := Partial1(Flip(strings.Split), " ")
-tokenize := Compose(splitstr, sanitize)
+tokenize := Compose(
+    Partial1(Flip(strings.Split), " "),
+    Compose(strings.ToLower, replacer.Replace),
+)
 
 text := "Lorem ipsum dolor sit amet, ...consectetur."
 

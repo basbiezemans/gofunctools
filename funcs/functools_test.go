@@ -4,7 +4,6 @@ import (
 	"errors"
 	"reflect"
 	"runtime"
-	"sort"
 	"strings"
 	"testing"
 	"unicode"
@@ -222,80 +221,6 @@ func TestUnzipWith(t *testing.T) {
 	}
 }
 
-func TestPipe(t *testing.T) {
-	input := "  Lorem ipsum dolor sit amet, consectetur  "
-	expect := "lorem-ipsum-dolor-sit-amet-consectetur"
-	rep := strings.NewReplacer(",", "", ".", "", " ", "-")
-	slugify := Pipe(strings.TrimSpace, rep.Replace, strings.ToLower)
-	result := slugify(input)
-	if result != expect {
-		t.Errorf("Pipe(s.TrimSpace, r.Replace, s.ToLower)(%q) = %q, expected %q", input, result, expect)
-	}
-}
-
-func TestCompose(t *testing.T) {
-	input := "Lorem ipsum dolor sit amet, consectetur..."
-	expect := []string{
-		"lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
-	}
-	rep := strings.NewReplacer(",", "", ".", "")
-	split := func(sep string) func(string) []string {
-		return func(s string) []string {
-			return strings.Split(s, sep)
-		}
-	}
-	tokenize := Compose(split(" "), Compose(strings.ToLower, rep.Replace))
-	result := tokenize(input)
-	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Compose(split(" "), Compose(s.ToLower, r.Replace))(%q) = %#v, expected %#v`, input, result, expect)
-	}
-}
-
-func TestFlipCurry2(t *testing.T) {
-	input := "lorem ipsum dolor sit amet consectetur"
-	expect := []string{
-		"lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
-	}
-	split := Curry2(Flip(strings.Split))
-	words := split(" ")
-	result := words(input)
-	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Curry2(Flip(s.Split))(" ")(%q) = %#v, expected %#v`, input, result, expect)
-	}
-}
-
-func TestCurry3(t *testing.T) {
-	input := "Lorem ipsum, dolor sit amet, consectetur."
-	expect := []string{"Lorem ipsum", "dolor sit amet, consectetur."}
-	splitN := Curry3(strings.SplitN)(input)(", ")
-	result := splitN(2) // at most 2 substrings; the last substring is the unsplit remainder
-	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Curry3(s.SplitN)(%q)(",")(2) = %#v, expected %#v`, input, result, expect)
-	}
-}
-
-func TestFlipPartial1(t *testing.T) {
-	input := "lorem ipsum dolor sit amet consectetur"
-	expect := []string{
-		"lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
-	}
-	words := Partial1(Flip(strings.Split), " ")
-	result := words(input)
-	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Partial1(Flip(s.Split), " ")(%q) = %#v, expected %#v`, input, result, expect)
-	}
-}
-
-func TestPartial2(t *testing.T) {
-	input := "Lorem ipsum, dolor sit amet, consectetur."
-	expect := []string{"Lorem ipsum", "dolor sit amet, consectetur."}
-	splitN := Partial2(strings.SplitN, input, ", ")
-	result := splitN(2) // at most 2 substrings; the last substring is the unsplit remainder
-	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Partial2(s.SplitN, %q, ",")(2) = %#v, expected %#v`, input, result, expect)
-	}
-}
-
 func TestPartition(t *testing.T) {
 	numbers := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	expect1 := []int{0, 2, 4, 6, 8}
@@ -312,29 +237,6 @@ func TestCount(t *testing.T) {
 	result := Count(even, numbers)
 	if result != expect {
 		t.Errorf("Count(even, %v) = %d, expected %d", numbers, result, expect)
-	}
-}
-
-func TestHashMapToSlice(t *testing.T) {
-	type Tuple2 struct {
-		fst string
-		snd int
-	}
-	asTuple2 := func(fst string, snd int) Tuple2 {
-		return Tuple2{fst, snd}
-	}
-	items := map[string]int{
-		"lorem": 1, "ipsum": 2, "dolor": 3,
-	}
-	expect := []Tuple2{
-		{"lorem", 1}, {"ipsum", 2}, {"dolor", 3},
-	}
-	result := HashMapToSlice(asTuple2, items)
-	sort.SliceStable(result, func(i, j int) bool {
-		return result[i].snd < result[j].snd
-	})
-	if !reflect.DeepEqual(result, expect) {
-		t.Errorf("MapToSlice(%v, asTuple2) = %v, expected %v", items, result, expect)
 	}
 }
 

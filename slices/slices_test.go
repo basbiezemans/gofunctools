@@ -1,4 +1,4 @@
-package functools
+package slices
 
 import (
 	"errors"

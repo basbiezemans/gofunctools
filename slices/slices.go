@@ -1,6 +1,6 @@
 // Package functools defines common higher-order functions that are
 // useful with slices of any type.
-package functools
+package slices
 
 // Any, applied to a predicate and a slice, determines whether any element of
 // the slice satisfies the predicate.

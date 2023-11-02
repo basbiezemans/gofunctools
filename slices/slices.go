@@ -1,5 +1,5 @@
-// Package functools defines common higher-order functions that are
-// useful with slices of any type.
+// This package defines common higher-order functions that are useful with
+// slices of any type.
 package slices
 
 // Any, applied to a predicate and a slice, determines whether any element of

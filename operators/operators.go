@@ -1,5 +1,5 @@
 // This package defines various functions that correspond to operators of Go.
-// They are meant to be used with higher-order functions like Filter, Reduce, etconstraints.
+// They are meant to be used with higher-order functions like Filter, Reduce, etc.
 package operators
 
 import (

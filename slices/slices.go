@@ -164,15 +164,20 @@ func Count[A any](fn func(A) bool, xs []A) int {
 	return k
 }
 
-// SliceToHashMap, applied to a slice and a splitter function, creates a
+// ToHashMap, applied to a slice and a splitter function, creates a
 // hash map with elements from the slice splitted as key-value pairs.
-func SliceToHashMap[A comparable, B, C any](fn func(B) (A, C), xs []B) map[A]C {
+func ToHashMap[A comparable, B, C any](fn func(B) (A, C), xs []B) map[A]C {
 	var hm = make(map[A]C, len(xs))
 	for _, x := range xs {
 		k, v := fn(x)
 		hm[k] = v
 	}
 	return hm
+}
+
+// Deprecated: use function ToHashMap.
+func SliceToHashMap[A comparable, B, C any](fn func(B) (A, C), xs []B) map[A]C {
+	return ToHashMap(fn, xs)
 }
 
 // Unfold, builds a slice from a seed value. The function takes the element and

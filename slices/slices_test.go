@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 	"unicode"
+
+	"github.com/basbiezemans/gofunctools/pair"
 )
 
 func TestAny(t *testing.T) {
@@ -240,23 +242,18 @@ func TestCount(t *testing.T) {
 	}
 }
 
-func TestSliceToHashMap(t *testing.T) {
-	type Tuple2 struct {
-		fst string
-		snd int
-	}
-	kvSplit := func(tuple Tuple2) (string, int) {
-		return tuple.fst, tuple.snd
-	}
-	items := []Tuple2{
-		{"lorem", 1}, {"ipsum", 2}, {"dolor", 3},
+func TestToHashMap(t *testing.T) {
+	items := []pair.Pair[string, int]{
+		pair.New("lorem", 1),
+		pair.New("ipsum", 2),
+		pair.New("dolor", 3),
 	}
 	expect := map[string]int{
 		"lorem": 1, "ipsum": 2, "dolor": 3,
 	}
-	result := SliceToHashMap(kvSplit, items)
+	result := ToHashMap(pair.Unpair, items)
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf("SliceToMap(%v, kvSplit) = %v, expected %v", items, result, expect)
+		t.Errorf("ToHashMap(pair.Unpair, %v) = %v, expected %v", items, result, expect)
 	}
 }
 

@@ -6,28 +6,25 @@ import (
 	"sort"
 	"strings"
 	"testing"
+
+	"github.com/basbiezemans/gofunctools/pair"
 )
 
-func TestHashMapToSlice(t *testing.T) {
-	type Tuple2 struct {
-		fst string
-		snd int
-	}
-	asTuple2 := func(fst string, snd int) Tuple2 {
-		return Tuple2{fst, snd}
-	}
+func TestToSlice(t *testing.T) {
 	items := map[string]int{
 		"lorem": 1, "ipsum": 2, "dolor": 3,
 	}
-	expect := []Tuple2{
-		{"lorem", 1}, {"ipsum", 2}, {"dolor", 3},
+	expect := []pair.Pair[string, int]{
+		pair.New("lorem", 1),
+		pair.New("ipsum", 2),
+		pair.New("dolor", 3),
 	}
-	result := HashMapToSlice(asTuple2, items)
+	result := ToSlice(pair.New, items)
 	sort.SliceStable(result, func(i, j int) bool {
-		return result[i].snd < result[j].snd
+		return result[i].Snd() < result[j].Snd()
 	})
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf("MapToSlice(%v, asTuple2) = %v, expected %v", items, result, expect)
+		t.Errorf("ToSlice(pair.New, %v) = %v, expected %v", items, result, expect)
 	}
 }
 

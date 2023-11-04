@@ -1,14 +1,19 @@
 // Package maps defines various functions useful with maps of any type.
 package maps
 
-// HashMapToSlice, applied to a hash map and a combiner function, combines
+// ToSlice, applied to a hash map and a combiner function, combines
 // key-value pairs as elements of a new slice.
-func HashMapToSlice[K comparable, V, T any](fn func(K, V) T, hm map[K]V) []T {
-	var xs = make([]T, 0, len(hm))
+func ToSlice[A comparable, B, C any](fn func(A, B) C, hm map[A]B) []C {
+	var xs = make([]C, 0, len(hm))
 	for k, v := range hm {
 		xs = append(xs, fn(k, v))
 	}
 	return xs
+}
+
+// Deprecated: use function ToSlice.
+func HashMapToSlice[A comparable, B, C any](fn func(A, B) C, hm map[A]B) []C {
+	return ToSlice(fn, hm)
 }
 
 // Map applies a binary function to each key-value pair of a hash map.

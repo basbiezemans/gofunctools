@@ -29,14 +29,14 @@ func TestToSlice(t *testing.T) {
 }
 
 func TestMap(t *testing.T) {
-	mapper := func(key string, value float64) (string, float64) {
-		return strings.ToUpper(key), math.Exp2(value)
+	mapper := func(key string, value float64) (float64, string) {
+		return math.Exp2(value), strings.ToUpper(key)
 	}
 	foomap := map[string]float64{
 		"foo": 1, "bar": 2, "baz": 3,
 	}
-	expect := map[string]float64{
-		"FOO": 2, "BAR": 4, "BAZ": 8,
+	expect := map[float64]string{
+		2: "FOO", 4: "BAR", 8: "BAZ",
 	}
 	result := Map(mapper, foomap)
 	if !reflect.DeepEqual(result, expect) {

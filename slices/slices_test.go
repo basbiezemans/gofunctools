@@ -385,6 +385,15 @@ func TestConcatMap(t *testing.T) {
 	}
 }
 
+func BenchmarkConcatMap(b *testing.B) {
+	fn := func(i int) []int {
+		return []int{-i, i}
+	}
+	for i := 0; i < b.N; i++ {
+		ConcatMap(fn, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+	}
+}
+
 // Helper functions
 
 func even(x int) bool {

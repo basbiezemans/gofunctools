@@ -255,7 +255,7 @@ func ScanRight[A, B any](fn func(A, B) B, initValue B, xs []A) []B {
 // ConcatMap applies a function, returning a slice, over a slice and concatenates
 // the results.
 func ConcatMap[A, B any](fn func(A) []B, xs []A) []B {
-	var ys = make([]B, 0)
+	var ys = make([]B, 0, len(xs))
 	for _, x := range xs {
 		ys = append(ys, fn(x)...)
 	}

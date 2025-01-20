@@ -287,14 +287,6 @@ func ConcatMap[A, B any](fn func(A) []B, xs []A) []B {
 	return ys
 }
 
-// Returns the smaller of its two arguments.
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 // Return an element of a slice or a zero value if the index is out of range
 func getOrZero[T any](i int, xs []T) T {
 	if i >= 0 && i < len(xs) {

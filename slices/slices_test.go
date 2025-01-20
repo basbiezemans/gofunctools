@@ -214,6 +214,14 @@ func TestZipWith(t *testing.T) {
 	}
 }
 
+func TestZipLongest(t *testing.T) {
+	expect := []int{2, 4, 3, 4}
+	result := ZipLongest(add, []int{1, 2}, []int{1, 2, 3, 4})
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf("ZipLongest(add, []int{1,2}, []int{1,2,3,4}) = %v, expected %v", result, expect)
+	}
+}
+
 func TestUnzipWith(t *testing.T) {
 	type DataPoint struct {
 		date string

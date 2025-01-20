@@ -136,6 +136,17 @@ func TestMap(t *testing.T) {
 	}
 }
 
+func TestMapMaybe(t *testing.T) {
+	expect := []int{1, 2, 3, 4}
+	slices := [][]int{
+		{1}, {}, {1, 2}, {1, 2, 3}, {}, {4},
+	}
+	result := MapMaybe(last, slices)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf("MapMaybe(last, [][]int{...}) = %v, expected %v", result, expect)
+	}
+}
+
 func TestFilter(t *testing.T) {
 	expect := []int{2, 4}
 	result := Filter(even, []int{1, 2, 3, 4})

@@ -79,6 +79,18 @@ func Map[A, B any](fn func(A) B, xs []A) []B {
 	return ys
 }
 
+// MapMaybe applies a unary function, which can fail, to each element
+// of a slice, throws out any errors and returns the proper result values.
+func MapMaybe[A, B any](fn func(A) (B, error), xs []A) []B {
+	var ys = make([]B, 0)
+	for _, x := range xs {
+		if y, err := fn(x); err == nil {
+			ys = append(ys, y)
+		}
+	}
+	return ys
+}
+
 // Filter, applied to a predicate and a slice, filters the slice of those
 // elements that satisfy the predicate.
 func Filter[A any](fn func(A) bool, xs []A) []A {

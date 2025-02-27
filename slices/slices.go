@@ -289,9 +289,14 @@ func ConcatMap[A, B any](fn func(A) []B, xs []A) []B {
 
 // Return an element of a slice or a zero value if the index is out of range
 func getOrZero[T any](i int, xs []T) T {
+	var zero T
+	return getOrDefault(i, zero, xs)
+}
+
+// Return an element of a slice or a default value if the index is out of range
+func getOrDefault[T any](i int, defValue T, xs []T) T {
 	if i >= 0 && i < len(xs) {
 		return xs[i]
 	}
-	var zero T
-	return zero
+	return defValue
 }

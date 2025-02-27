@@ -150,17 +150,13 @@ func ZipWithPad[A, B, C any](fn func(A, B) C, a A, b B, xs []A, ys []B) []C {
 	return zs
 }
 
-// ZipLongest, applied to a combiner function and two slices, combines elements
+// ZipWithZero, applied to a combiner function and two slices, combines elements
 // from the two slices using the combiner function. If one input slice is shorter
 // than the other, missing elements are replaced with zero values.
-func ZipLongest[A, B, C any](fn func(A, B) C, xs []A, ys []B) []C {
-	var n = max(len(xs), len(ys))
-	var zs = make([]C, n)
-	for i := 0; i < n; i++ {
-		x, y := getOrZero(i, xs), getOrZero(i, ys)
-		zs[i] = fn(x, y)
-	}
-	return zs
+func ZipWithZero[A, B, C any](fn func(A, B) C, xs []A, ys []B) []C {
+	var a A
+	var b B
+	return ZipWithPad(fn, a, b, xs, ys)
 }
 
 // UnzipWith, applied to a splitter function and a slice, splits elements in
@@ -298,12 +294,6 @@ func ConcatMap[A, B any](fn func(A) []B, xs []A) []B {
 		ys = append(ys, fn(x)...)
 	}
 	return ys
-}
-
-// Return an element of a slice or a zero value if the index is out of range
-func getOrZero[T any](i int, xs []T) T {
-	var zero T
-	return getOrDefault(i, zero, xs)
 }
 
 // Return an element of a slice or a default value if the index is out of range

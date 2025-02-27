@@ -222,11 +222,11 @@ func TestZipWithPad(t *testing.T) {
 	}
 }
 
-func TestZipLongest(t *testing.T) {
+func TestZipWithZero(t *testing.T) {
 	expect := []int{2, 4, 3, 4}
-	result := ZipLongest(add, []int{1, 2}, []int{1, 2, 3, 4})
+	result := ZipWithZero(add, []int{1, 2}, []int{1, 2, 3, 4})
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf("ZipLongest(add, []int{1,2}, []int{1,2,3,4}) = %v, expected %v", result, expect)
+		t.Errorf("ZipWithZero(add, []int{1,2}, []int{1,2,3,4}) = %v, expected %v", result, expect)
 	}
 }
 

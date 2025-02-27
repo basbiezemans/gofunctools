@@ -214,6 +214,14 @@ func TestZipWith(t *testing.T) {
 	}
 }
 
+func TestZipWithPad(t *testing.T) {
+	expect := []int{2, 4, 3, 4}
+	result := ZipWithPad(add, 0, 0, []int{1, 2}, []int{1, 2, 3, 4})
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf("ZipWithPad(add, 0, 0, []int{1,2}, []int{1,2,3,4}) = %v, expected %v", result, expect)
+	}
+}
+
 func TestZipLongest(t *testing.T) {
 	expect := []int{2, 4, 3, 4}
 	result := ZipLongest(add, []int{1, 2}, []int{1, 2, 3, 4})

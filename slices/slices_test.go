@@ -12,28 +12,48 @@ import (
 )
 
 func TestAny(t *testing.T) {
-	expect := true
-	result := Any(even, []int{1, 2, 3, 4})
-	if result != expect {
-		t.Errorf("Any(even, []int{1,2,3,4}) = %t, expected %t", result, expect)
+	type TestCase struct {
+		input  []int
+		expect bool
 	}
-	expect = false
-	result = Any(even, []int{1, 3, 5, 7})
-	if result != expect {
-		t.Errorf("Any(even, []int{1,3,5,7}) = %t, expected %t", result, expect)
+	testcases := []TestCase{
+		{[]int{}, false},
+		{[]int{1}, false},
+		{[]int{2}, true},
+		{[]int{2, 4}, true},
+		{[]int{1, 2, 1}, true},
+		{[]int{1, 3, 4, 7}, true},
+		{[]int{1, 3, 5, 7, 9}, false},
+	}
+	errorMsg := "Any(even, %v) = %t, expected %t"
+	for _, test := range testcases {
+		result := Any(even, test.input)
+		if result != test.expect {
+			t.Errorf(errorMsg, test.input, result, test.expect)
+		}
 	}
 }
 
 func TestAll(t *testing.T) {
-	expect := true
-	result := All(even, []int{2, 4, 6, 8})
-	if result != expect {
-		t.Errorf("All(even, []int{2,4,6,8}) = %t, expected %t", result, expect)
+	type TestCase struct {
+		input  []int
+		expect bool
 	}
-	expect = false
-	result = All(even, []int{2, 4, 7, 8})
-	if result != expect {
-		t.Errorf("All(even, []int{2,4,7,8}) = %t, expected %t", result, expect)
+	testcases := []TestCase{
+		{[]int{}, true},
+		{[]int{1}, false},
+		{[]int{2}, true},
+		{[]int{2, 4}, true},
+		{[]int{1, 2, 1}, false},
+		{[]int{2, 4, 6, 8}, true},
+		{[]int{2, 4, 7, 8, 2}, false},
+	}
+	errorMsg := "All(even, %v) = %t, expected %t"
+	for _, test := range testcases {
+		result := All(even, test.input)
+		if result != test.expect {
+			t.Errorf(errorMsg, test.input, result, test.expect)
+		}
 	}
 }
 

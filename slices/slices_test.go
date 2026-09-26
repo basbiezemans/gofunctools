@@ -1,9 +1,11 @@
 package slices
 
 import (
+	"cmp"
 	"errors"
 	"reflect"
 	"runtime"
+	"slices"
 	"strings"
 	"testing"
 	"unicode"
@@ -153,6 +155,29 @@ func TestMap(t *testing.T) {
 	result := Map(double, []int{1, 2, 3, 4})
 	if !reflect.DeepEqual(result, expect) {
 		t.Errorf("Map(double, []int{1,2,3,4}) = %v, expected %v", result, expect)
+	}
+}
+
+func TestParallelMap(t *testing.T) {
+	expect := []int{2, 4, 6, 8}
+	result := ParallelMap(double, []int{1, 2, 3, 4})
+	// The result is unordered. Use an equivalence check to verify its correctness.
+	if !areEquivalent(result, expect) {
+		t.Errorf("ParallelMap(double, []int{1,2,3,4}) = %v, expected %v", result, expect)
+	}
+}
+
+func TestParallelMapPanic(t *testing.T) {
+	expect := []int{2, 4, 8}
+	result := ParallelMap(func(x int) int {
+		if x == 3 {
+			panic("test")
+		}
+		return double(x)
+	}, []int{1, 2, 3, 4})
+	// The result is unordered. Use an equivalence check to verify its correctness.
+	if !areEquivalent(result, expect) {
+		t.Errorf("ParallelMap(double, []int{1,2,3,4}) = %v, expected %v", result, expect)
 	}
 }
 
@@ -516,4 +541,16 @@ func funcName[T, U any](fn func(T, U) T) string {
 		return str
 	}
 	return "N/A"
+}
+
+// Checks whether two segments are the same, regardless of the order of the elements.
+func areEquivalent[S ~[]E, E cmp.Ordered](a, b S) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	aCopy := slices.Clone(a)
+	bCopy := slices.Clone(b)
+	slices.Sort(aCopy)
+	slices.Sort(bCopy)
+	return slices.Equal(aCopy, bCopy)
 }

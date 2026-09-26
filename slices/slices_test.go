@@ -2,10 +2,12 @@ package slices
 
 import (
 	"cmp"
+	"crypto/sha256"
 	"errors"
 	"reflect"
 	"runtime"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 	"unicode"
@@ -463,6 +465,39 @@ func BenchmarkConcatMap(b *testing.B) {
 	}
 	for i := 0; i < b.N; i++ {
 		ConcatMap(fn, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+	}
+}
+
+func expensiveHash(x int) [32]byte {
+	data := []byte(strconv.Itoa(x))
+	hash := sha256.Sum256(data)
+	for range 1_000 {
+		hash = sha256.Sum256(hash[:])
+	}
+	return hash
+}
+
+func makeRange(n int) []int {
+	s := make([]int, n)
+	for i := range s {
+		s[i] = i
+	}
+	return s
+}
+
+func BenchmarkMap(b *testing.B) {
+	input := makeRange(1_000)
+	b.ResetTimer()
+	for range b.N {
+		Map(expensiveHash, input)
+	}
+}
+
+func BenchmarkParallelMap(b *testing.B) {
+	input := makeRange(1_000)
+	b.ResetTimer()
+	for range b.N {
+		ParallelMap(expensiveHash, input)
 	}
 }
 

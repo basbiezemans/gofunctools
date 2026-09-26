@@ -161,7 +161,7 @@ func TestMap(t *testing.T) {
 func TestParallelMap(t *testing.T) {
 	expect := []int{2, 4, 6, 8}
 	result := ParallelMap(double, []int{1, 2, 3, 4})
-	// The result is unordered. Use an equivalence check to verify its correctness.
+	// The result is unordered. We use an equivalence check to verify its correctness.
 	if !areEquivalent(result, expect) {
 		t.Errorf("ParallelMap(double, []int{1,2,3,4}) = %v, expected %v", result, expect)
 	}
@@ -175,7 +175,7 @@ func TestParallelMapPanic(t *testing.T) {
 		}
 		return double(x)
 	}, []int{1, 2, 3, 4})
-	// The result is unordered. Use an equivalence check to verify its correctness.
+	// The result is unordered. We use an equivalence check to verify its correctness.
 	if !areEquivalent(result, expect) {
 		t.Errorf("ParallelMap(double, []int{1,2,3,4}) = %v, expected %v", result, expect)
 	}
@@ -543,7 +543,7 @@ func funcName[T, U any](fn func(T, U) T) string {
 	return "N/A"
 }
 
-// Checks whether two segments are the same, regardless of the order of the elements.
+// Checks whether two slices are the same, regardless of the order of the elements.
 func areEquivalent[S ~[]E, E cmp.Ordered](a, b S) bool {
 	if len(a) != len(b) {
 		return false

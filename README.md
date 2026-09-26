@@ -1,12 +1,14 @@
 # Go functools
 
-This package provides generic higher-order functions. They can be used to build functions of functions in a concise manner.
+This package provides generic higher-order functions.
+
+## Original Package
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/basbiezemans/gofunctools.svg)](https://pkg.go.dev/github.com/basbiezemans/gofunctools)
 
-## Go version
+## Requirements
 
-This package requires Go version 1.23 or later.
+This package requires Go version 1.23 or later. It doesn't have any dependencies.
 
 ## Examples
 

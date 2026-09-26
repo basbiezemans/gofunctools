@@ -12,7 +12,7 @@ import (
 	"testing"
 	"unicode"
 
-	"github.com/basbiezemans/gofunctools/pair"
+	"github.com/basbiezemans/gofunctools/v2/pair"
 )
 
 func TestAny(t *testing.T) {

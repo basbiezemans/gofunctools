@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/basbiezemans/gofunctools/pair"
+	"github.com/basbiezemans/gofunctools/v2/pair"
 )
 
 func TestToSlice(t *testing.T) {

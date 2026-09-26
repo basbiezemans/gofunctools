@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	fts "github.com/basbiezemans/gofunctools"
-	opr "github.com/basbiezemans/gofunctools/operators"
+	fts "github.com/basbiezemans/gofunctools/v2"
+	opr "github.com/basbiezemans/gofunctools/v2/operators"
 )
 
 func TestSwap(t *testing.T) {

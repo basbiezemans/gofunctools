@@ -6,7 +6,7 @@ This package provides generic higher-order functions. They can be used to build 
 
 ## Go version
 
-This package requires Go version 1.21 or later.
+This package requires Go version 1.23 or later.
 
 ## Examples
 

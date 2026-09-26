@@ -5,26 +5,24 @@ package operators
 import (
 	"errors"
 	"math"
-
-	"golang.org/x/exp/constraints"
 )
 
 type Number interface {
-	constraints.Integer | constraints.Float
+	Integer | Float
 }
 
 // Modulo (remainder)
-func Modulo[T constraints.Integer](x, y T) T {
+func Modulo[T Integer](x, y T) T {
 	return x % y
 }
 
 // Determine if a given integer is an even number.
-func Even[T constraints.Integer](x T) bool {
+func Even[T Integer](x T) bool {
 	return x%2 == 0
 }
 
 // Determine if a given integer is an odd number.
-func Odd[T constraints.Integer](x T) bool {
+func Odd[T Integer](x T) bool {
 	return x%2 != 0
 }
 
@@ -75,31 +73,31 @@ func OR(x, y bool) bool {
 }
 
 // Equality
-func Equal[T constraints.Ordered](x, y T) bool {
+func Equal[T Ordered](x, y T) bool {
 	return x == y
 }
 
 // Difference
-func NotEqual[T constraints.Ordered](x, y T) bool {
+func NotEqual[T Ordered](x, y T) bool {
 	return x != y
 }
 
 // Ordering: less than
-func LessThan[T constraints.Ordered](x, y T) bool {
+func LessThan[T Ordered](x, y T) bool {
 	return x < y
 }
 
 // Ordering: greater than
-func GreaterThan[T constraints.Ordered](x, y T) bool {
+func GreaterThan[T Ordered](x, y T) bool {
 	return x > y
 }
 
 // Ordering: less than or equal
-func LessThanOrEqual[T constraints.Ordered](x, y T) bool {
+func LessThanOrEqual[T Ordered](x, y T) bool {
 	return x <= y
 }
 
 // Ordering: greater than or equal
-func GreaterThanOrEqual[T constraints.Ordered](x, y T) bool {
+func GreaterThanOrEqual[T Ordered](x, y T) bool {
 	return x >= y
 }

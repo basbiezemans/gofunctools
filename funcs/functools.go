@@ -1,15 +1,12 @@
 // Package functools provides generic higher-order functions.
 package functools
 
+import "slices"
+
 // Any, applied to a predicate and a slice, determines whether any element of
 // the slice satisfies the predicate.
 func Any[A any](fn func(A) bool, xs []A) bool {
-	for _, x := range xs {
-		if fn(x) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(xs, fn)
 }
 
 // All, applied to a predicate and a slice, determines whether all elements of

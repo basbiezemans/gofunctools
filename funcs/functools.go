@@ -345,11 +345,3 @@ func ConcatMap[A, B any](fn func(A) []B, xs []A) []B {
 	}
 	return ys
 }
-
-// Returns the smaller of its two arguments.
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}

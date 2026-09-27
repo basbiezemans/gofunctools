@@ -1,7 +1,13 @@
 // Package functools provides generic higher-order functions.
 package functools
 
-import "slices"
+import (
+	"fmt"
+	"os"
+	"runtime/debug"
+	"slices"
+	"sync"
+)
 
 // Any, applied to a predicate and a slice, determines whether any element of
 // the slice satisfies the predicate.
@@ -90,6 +96,42 @@ func MapMaybe[A, B any](fn func(A) (B, error), xs []A) []B {
 		}
 	}
 	return ys
+}
+
+// ParallelMap applies a unary function to each element of a slice in parallel.
+//   - The output is not sorted due to parallel processing.
+//   - This function incurs more overhead than `Map`, but is faster with larger
+//     inputs (e.g. more than 1,000 elements) and a CPU-intensive callback.
+//   - If a callback triggers a panic, its result is ignored. This reduces the
+//     length of the output.
+func ParallelMap[A, B any](fn func(A) B, xs []A) []B {
+	var wg sync.WaitGroup
+	var ch = make(chan B)
+	var ys = make([]B, 0, len(xs))
+	for i := range xs {
+		wg.Add(1)
+		go func(index int) {
+			defer wg.Done()
+			defer recovery()
+			ch <- fn(xs[index])
+		}(i)
+	}
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+	for val := range ch {
+		ys = append(ys, val)
+	}
+	return ys
+}
+
+// Recovery function for ParallelMap. It consumes a panic and prints a
+// stack trace to standard error.
+func recovery() {
+	if r := recover(); r != nil {
+		fmt.Fprintf(os.Stderr, "panic: %v\n%s\n", r, debug.Stack())
+	}
 }
 
 // Filter, applied to a predicate and a slice, filters the slice of those

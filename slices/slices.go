@@ -103,7 +103,7 @@ func MapMaybe[A, B any](fn func(A) (B, error), xs []A) []B {
 }
 
 // ParallelMap applies a unary function to each element of a slice in parallel.
-//   - Due to the parallel nature of this function, the output is not sorted.
+//   - The output is not sorted due to parallel processing of the input.
 //   - This function incurs more overhead than `Map`, but is faster with larger
 //     inputs (e.g. more than 1,000 elements) and a CPU-intensive callback.
 //   - If a callback triggers a panic, its result is ignored. This reduces the

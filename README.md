@@ -8,7 +8,7 @@ This package provides generic higher-order functions.
 
 ## Requirements
 
-This package requires Go version 1.23 or later. It doesn't have any dependencies.
+This package requires Go version 1.23 or later.
 
 ## Examples
 

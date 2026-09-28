@@ -465,6 +465,33 @@ func TestConcatMap(t *testing.T) {
 	}
 }
 
+func TestGroupBy(t *testing.T) {
+	type TestCase struct {
+		callb  func(int, int) bool
+		fname  string
+		input  []int
+		expect [][]int
+	}
+	eq := func(x, y int) bool { return x == y }
+	neq := func(x, y int) bool { return x != y }
+	gt := func(x, y int) bool { return x > y }
+	lt5 := func(x, y int) bool { return y-x < 5 }
+	testcases := []TestCase{
+		{eq, "equal", []int{}, [][]int{}},
+		{eq, "equal", []int{1, 1, 1, 2, 3, 3, 4, 5}, [][]int{{1, 1, 1}, {2}, {3, 3}, {4}, {5}}},
+		{neq, "not-equal", []int{1, 1, 1, 2, 3, 1, 4, 4, 5}, [][]int{{1}, {1}, {1, 2, 3}, {1, 4, 4, 5}}},
+		{gt, "greater-than", []int{1, 3, 5, 1, 4, 2, 6, 5, 4}, [][]int{{1}, {3}, {5, 1, 4, 2}, {6, 5, 4}}},
+		{lt5, "less-than-5", makeRange(20), [][]int{{0, 1, 2, 3, 4}, {5, 6, 7, 8, 9}, {10, 11, 12, 13, 14}, {15, 16, 17, 18, 19}}},
+	}
+	errorMsg := "GroupBy(%s, %v) = %v, expected %v"
+	for _, tc := range testcases {
+		result := GroupBy(tc.callb, tc.input)
+		if !reflect.DeepEqual(result, tc.expect) {
+			t.Errorf(errorMsg, tc.fname, tc.input, result, tc.expect)
+		}
+	}
+}
+
 func BenchmarkConcatMap(b *testing.B) {
 	fn := func(i int) []int {
 		return []int{-i, i}

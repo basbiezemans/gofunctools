@@ -5,6 +5,7 @@ package slices
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"runtime/debug"
 	"sync"
 )
@@ -109,18 +110,25 @@ func MapMaybe[A, B any](fn func(A) (B, error), xs []A) []B {
 //   - If a callback triggers a panic, its result is ignored. This reduces the
 //     length of the output.
 func ParallelMap[A, B any](fn func(A) B, xs []A) []B {
+	var semaphore = make(chan struct{}, runtime.GOMAXPROCS(0))
 	var wg sync.WaitGroup
 	var ch = make(chan B)
 	var ys = make([]B, 0, len(xs))
-	for i := range xs {
-		wg.Add(1)
-		go func(index int) {
-			defer wg.Done()
-			defer recovery()
-			ch <- fn(xs[index])
-		}(i)
-	}
+	// The launcher schedules workers, acquiring a semaphore slot before each
+	// launch so no more than a limited number of callbacks run concurrently.
 	go func() {
+		for i := range xs {
+			semaphore <- struct{}{} // Acquire a slot; block if the limit is reached
+			wg.Add(1)
+			go func(index int) {
+				defer func() {
+					<-semaphore // Release the acquired slot
+					wg.Done()
+				}()
+				defer recovery()
+				ch <- fn(xs[index])
+			}(i)
+		}
 		wg.Wait()
 		close(ch)
 	}()

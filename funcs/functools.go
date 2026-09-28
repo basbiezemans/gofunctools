@@ -381,3 +381,25 @@ func ConcatMap[A, B any](fn func(A) []B, xs []A) []B {
 	}
 	return ys
 }
+
+// GroupBy groups consecutive elements of an array into arrays, using the
+// specified equivalence relation to determine equality. Equality is checked
+// against the first element in the group, not against the nearest neighbour.
+func GroupBy[A comparable](fn func(A, A) bool, xs []A) [][]A {
+	var ys = make([][]A, 0)
+	if len(xs) == 0 {
+		return ys
+	}
+	var first = xs[0]
+	var group = []A{first}
+	for _, x := range xs[1:] {
+		if fn(first, x) {
+			group = append(group, x)
+		} else {
+			ys = append(ys, group)
+			first = x
+			group = []A{first}
+		}
+	}
+	return slices.Clip(append(ys, group))
+}

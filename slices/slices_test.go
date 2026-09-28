@@ -12,6 +12,8 @@ import (
 	"testing"
 	"unicode"
 
+	"github.com/zenizh/go-capturer"
+
 	"github.com/basbiezemans/gofunctools/v2/pair"
 )
 
@@ -170,13 +172,17 @@ func TestParallelMap(t *testing.T) {
 }
 
 func TestParallelMapPanic(t *testing.T) {
-	expect := []int{2, 4, 8}
-	result := ParallelMap(func(x int) int {
+	var result []int
+	panicCallback := func(x int) int {
 		if x == 3 {
 			panic("test")
 		}
 		return double(x)
-	}, []int{1, 2, 3, 4})
+	}
+	expect := []int{2, 4, 8}
+	capturer.CaptureStderr(func() {
+		result = ParallelMap(panicCallback, []int{1, 2, 3, 4})
+	})
 	// The result is unordered. We use an equivalence check to verify its correctness.
 	if !areEquivalent(result, expect) {
 		t.Errorf("ParallelMap(double, []int{1,2,3,4}) = %v, expected %v", result, expect)

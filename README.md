@@ -2,8 +2,6 @@
 
 This package provides generic higher-order functions.
 
-## Original Package
-
 [![Go Reference](https://pkg.go.dev/badge/github.com/basbiezemans/gofunctools.svg)](https://pkg.go.dev/github.com/basbiezemans/gofunctools)
 
 ## Requirements
@@ -65,4 +63,35 @@ words := strings.Split(fruit, " ")
 fmt.Println(wordfreq(words)))
 
 // Output: map["apple":2, "banana":2, "grapes":1, "kiwi":1, "mango":1, "pear":2]
+```
+#### Maximum consecutive group with GroupBy, Compose, Partial1, Map, and Filter
+This is a more elaborate example that requires two small helper functions to
+carry out the task. We want to find a segment containing the maximum number of
+consecutive identical elements from a sequence of numbers. In this example, we
+choose the first result.
+```go
+numbers := []int{1, 1, 3, 3, 3, 1, 4, 4, 4, 5}
+
+func equal(a, b int) bool {
+    return a == b
+}
+
+func length(s []int) int {
+	return len(s)
+}
+
+// A slice of groups with consecutive equal elements
+groups := GroupBy(equal, numbers)
+
+// Function maxLen returns the maximum group length
+maxLen := Compose(slices.Max, Partial1(Map, length))
+
+// Function eqMaxLen determines if len(group) == maxlen
+eqMaxLen := Compose(Partial1(equal, maxLen(groups)), length)
+
+// Filter the groups and pick the first result
+firstMaxConsecutiveGroup := Filter(eqMaxLen, groups)[0]
+
+fmt.Println(firstMaxConsecutiveGroup)
+// Output: [3 3 3]
 ```

@@ -66,7 +66,7 @@ wordfreq := Partial2(FoldLeft, count, frequency{})
 fruit := "mango banana apple pear banana grapes pear kiwi apple"
 words := strings.Split(fruit, " ")
 
-fmt.Println(wordfreq(words)))
+fmt.Println(wordfreq(words))
 
 // Output: map["apple":2, "banana":2, "grapes":1, "kiwi":1, "mango":1, "pear":2]
 ```

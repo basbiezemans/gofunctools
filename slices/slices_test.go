@@ -1,18 +1,14 @@
 package slices
 
 import (
-	"cmp"
 	"crypto/sha256"
 	"errors"
 	"reflect"
 	"runtime"
-	"slices"
 	"strconv"
 	"strings"
 	"testing"
 	"unicode"
-
-	"github.com/zenizh/go-capturer"
 
 	"github.com/basbiezemans/gofunctools/v2/pair"
 )
@@ -165,8 +161,7 @@ func TestMap(t *testing.T) {
 func TestParallelMap(t *testing.T) {
 	expect := []int{2, 4, 6, 8}
 	result := ParallelMap(double, []int{1, 2, 3, 4})
-	// The result is unordered. We use an equivalence check to verify its correctness.
-	if !areEquivalent(result, expect) {
+	if !reflect.DeepEqual(result, expect) {
 		t.Errorf("ParallelMap(double, []int{1,2,3,4}) = %v, expected %v", result, expect)
 	}
 }
@@ -179,12 +174,9 @@ func TestParallelMapPanic(t *testing.T) {
 		}
 		return double(x)
 	}
-	expect := []int{2, 4, 8}
-	capturer.CaptureStderr(func() {
-		result = ParallelMap(panicCallback, []int{1, 2, 3, 4})
-	})
-	// The result is unordered. We use an equivalence check to verify its correctness.
-	if !areEquivalent(result, expect) {
+	expect := []int{2, 4, 0, 8}
+	result = ParallelMap(panicCallback, []int{1, 2, 3, 4})
+	if !reflect.DeepEqual(result, expect) {
 		t.Errorf("ParallelMap(double, []int{1,2,3,4}) = %v, expected %v", result, expect)
 	}
 }
@@ -524,6 +516,7 @@ func BenchmarkMap(b *testing.B) {
 	for range b.N {
 		Map(expensiveHash, input)
 	}
+	b.ReportMetric(float64(b.Elapsed().Microseconds()), "total-ms")
 }
 
 func BenchmarkParallelMap(b *testing.B) {
@@ -532,6 +525,7 @@ func BenchmarkParallelMap(b *testing.B) {
 	for range b.N {
 		ParallelMap(expensiveHash, input)
 	}
+	b.ReportMetric(float64(b.Elapsed().Microseconds()), "total-ms")
 }
 
 // Helper functions
@@ -609,16 +603,4 @@ func funcName[T, U any](fn func(T, U) T) string {
 		return str
 	}
 	return "N/A"
-}
-
-// Checks whether two slices are the same, regardless of the order of the elements.
-func areEquivalent[S ~[]E, E cmp.Ordered](a, b S) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	aCopy := slices.Clone(a)
-	bCopy := slices.Clone(b)
-	slices.Sort(aCopy)
-	slices.Sort(bCopy)
-	return slices.Equal(aCopy, bCopy)
 }

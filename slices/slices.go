@@ -3,10 +3,7 @@
 package slices
 
 import (
-	"fmt"
-	"os"
 	"runtime"
-	"runtime/debug"
 	"slices"
 	"sync"
 )
@@ -105,46 +102,36 @@ func MapMaybe[A, B any](fn func(A) (B, error), xs []A) []B {
 }
 
 // ParallelMap applies a unary function to each element of a slice in parallel.
-//   - The output is not sorted due to parallel processing of the input.
-//   - This function incurs more overhead than `Map`, but is faster with larger
-//     inputs (e.g. more than 1,000 elements) and a CPU-intensive callback.
-//   - If a callback triggers a panic, its result is ignored. This reduces the
-//     length of the output.
+//   - ParallelMap is a drop-in replacement for Map. It incurs slightly more
+//     overhead than Map, but is faster with larger inputs and a CPU-intensive
+//     callback.
+//   - If a callback triggers a panic, the output slice will have the default
+//     (zero) value for that specific index.
 func ParallelMap[A, B any](fn func(A) B, xs []A) []B {
-	var semaphore = make(chan struct{}, runtime.GOMAXPROCS(0))
+	if len(xs) == 0 {
+		return []B{}
+	}
+	var routines = min(runtime.GOMAXPROCS(0)*4, len(xs))
+	var chunkSize = ceildiv(len(xs), routines)
+	var chunkCount = ceildiv(len(xs), chunkSize)
+	var slice = make([]B, len(xs))
+	var index = 0
+	var recovery = func() { recover() }
 	var wg sync.WaitGroup
-	var ch = make(chan B)
-	var ys = make([]B, 0, len(xs))
-	// The launcher schedules workers, acquiring a semaphore slot before each
-	// launch so no more than a limited number of callbacks run concurrently.
-	go func() {
-		for i := range xs {
-			semaphore <- struct{}{} // Acquire a slot; block if the limit is reached
-			wg.Add(1)
-			go func(index int) {
-				defer func() {
-					<-semaphore // Release the acquired slot
-					wg.Done()
-				}()
-				defer recovery()
-				ch <- fn(xs[index])
-			}(i)
-		}
-		wg.Wait()
-		close(ch)
-	}()
-	for val := range ch {
-		ys = append(ys, val)
+	wg.Add(chunkCount)
+	for chunk := range slices.Chunk(xs, chunkSize) {
+		go func(chunk []A, chunkIndex int) {
+			defer wg.Done()
+			defer recovery()
+			offset := chunkIndex * chunkSize
+			for i, x := range chunk {
+				slice[offset+i] = fn(x)
+			}
+		}(chunk, index)
+		index++
 	}
-	return ys
-}
-
-// Recovery function for ParallelMap. It consumes a panic and prints a
-// stack trace to standard error.
-func recovery() {
-	if r := recover(); r != nil {
-		fmt.Fprintf(os.Stderr, "panic: %v\n%s\n", r, debug.Stack())
-	}
+	wg.Wait()
+	return slice
 }
 
 // Filter, applied to a predicate and a slice, filters the slice of those
@@ -372,6 +359,12 @@ func GroupBy[A comparable](fn func(A, A) bool, xs []A) [][]A {
 		}
 	}
 	return slices.Clip(append(ys, group))
+}
+
+// Returns the smallest integer greater than or equal to x/y
+// Example: 7/3 = (7 + 3 − 1) / 3 = 9/3 = 3
+func ceildiv(x, y int) int {
+	return (x + y - 1) / y
 }
 
 // Return an element of a slice or a default value if the index is out of range

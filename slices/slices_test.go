@@ -338,7 +338,7 @@ func TestUnfold(t *testing.T) {
 }
 
 func BenchmarkUnfold(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		Unfold(decrement, 1000)
 	}
 }
@@ -488,7 +488,7 @@ func BenchmarkConcatMap(b *testing.B) {
 	fn := func(i int) []int {
 		return []int{-i, i}
 	}
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		ConcatMap(fn, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
 	}
 }

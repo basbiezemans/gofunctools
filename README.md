@@ -6,7 +6,7 @@ Package `gofunctools` provides generic higher-order functions. They can be used 
 
 ## Go version
 
-This package requires version 1.21 or later.
+This package requires version 1.23 or later.
 
 ## Install
 

@@ -409,5 +409,5 @@ func GroupBy[A comparable](fn func(A, A) bool, xs []A) [][]A {
 			group = []A{first}
 		}
 	}
-	return slices.Clip(append(ys, group))
+	return append(ys, group)
 }

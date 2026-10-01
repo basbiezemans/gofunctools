@@ -164,7 +164,7 @@ func TakeWhile[A any](fn func(A) bool, xs []A) []A {
 func ZipWith[A, B, C any](fn func(A, B) C, xs []A, ys []B) []C {
 	var n = min(len(xs), len(ys))
 	var zs = make([]C, n)
-	for i := 0; i < n; i++ {
+	for i := range n {
 		zs[i] = fn(xs[i], ys[i])
 	}
 	return zs

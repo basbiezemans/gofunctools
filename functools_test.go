@@ -45,6 +45,15 @@ func TestReduceLeft(t *testing.T) {
 	}
 }
 
+func TestReduceLeftEmptyPanics(t *testing.T) {
+	defer func() {
+		if recover() == nil {
+			t.Error("ReduceLeft did not panic")
+		}
+	}()
+	ReduceLeft(subtract, []int{})
+}
+
 func TestReduceRight(t *testing.T) {
 	numbers := []int{1, 2, 3, 4}
 	expect := -2
@@ -52,6 +61,15 @@ func TestReduceRight(t *testing.T) {
 	if result != expect {
 		t.Errorf("ReduceRight(subtract, %v) = %d, expected %d", numbers, result, expect)
 	}
+}
+
+func TestReduceRightEmptyPanics(t *testing.T) {
+	defer func() {
+		if recover() == nil {
+			t.Error("ReduceRight did not panic")
+		}
+	}()
+	ReduceRight(subtract, []int{})
 }
 
 func TestFoldLeft(t *testing.T) {

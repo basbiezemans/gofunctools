@@ -3,6 +3,7 @@
 Package `gofunctools` provides generic higher-order functions. They can be used to build functions of functions in a concise manner.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/basbiezemans/gofunctools.svg)](https://pkg.go.dev/github.com/basbiezemans/gofunctools)
+[![Test](https://github.com/basbiezemans/gofunctools/actions/workflows/test.yml/badge.svg)](https://github.com/basbiezemans/gofunctools/actions/workflows/test.yml)
 
 ## Minimum Go version
 

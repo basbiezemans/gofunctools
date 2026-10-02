@@ -4,14 +4,25 @@ Package `gofunctools` provides generic higher-order functions. They can be used 
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/basbiezemans/gofunctools.svg)](https://pkg.go.dev/github.com/basbiezemans/gofunctools)
 
-## Go version
+## Minimum Go version
 
 This package requires version 1.23 or later.
 
-## Install
+## How to use this library
+
+Use `go get` to add this library to your project's go.mod file.
 
 ```bash
 go get github.com/basbiezemans/gofunctools
+```
+Then import the library in your Go code with:
+
+```go
+// Without a package prefix
+import . github.com/basbiezemans/gofunctools
+
+// With a short import alias
+import fn github.com/basbiezemans/gofunctools
 ```
 
 ## Examples
@@ -99,5 +110,6 @@ eqMaxLen := Compose(Partial1(equal, maxLen(groups)), length)
 firstMaxConsecutiveGroup := Filter(eqMaxLen, groups)[0]
 
 fmt.Println(firstMaxConsecutiveGroup)
+
 // Output: [3 3 3]
 ```

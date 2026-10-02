@@ -1,0 +1,23 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Run tests with coverage
+        run: go test -coverprofile=coverage.out ./...
+      - name: Add coverage to job summary
+        run: |
+          coverage=$(go tool cover -func=coverage.out | tail -n 1 | awk '{print $3}')
+          printf '## Test coverage\n\n**Total statement coverage:** %s\n' "$coverage" >> "$GITHUB_STEP_SUMMARY"

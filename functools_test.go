@@ -165,10 +165,19 @@ func TestMapMaybe(t *testing.T) {
 }
 
 func TestParallelMap(t *testing.T) {
-	expect := []int{2, 4, 6, 8}
-	result := ParallelMap(double, []int{1, 2, 3, 4})
-	if !reflect.DeepEqual(result, expect) {
-		t.Errorf("ParallelMap(double, []int{1,2,3,4}) = %v, expected %v", result, expect)
+	type TestCase struct {
+		input  []int
+		expect []int
+	}
+	testcases := []TestCase{
+		{[]int{}, []int{}},
+		{[]int{1, 2, 3, 4}, []int{2, 4, 6, 8}},
+	}
+	for _, tc := range testcases {
+		result := ParallelMap(double, tc.input)
+		if !reflect.DeepEqual(result, tc.expect) {
+			t.Errorf("ParallelMap(double, %v) = %v, expected %v", tc.input, result, tc.expect)
+		}
 	}
 }
 

@@ -223,8 +223,8 @@ func Curry3[A, B, C, D any](fn func(A, B, C) D) func(A) func(B) func(C) D {
 	}
 }
 
-// Partial1 takes a binary function and a value, and returns a unary function
-// as its result.
+// Partial1 takes a binary function and one value, and returns a unary
+// function as its result.
 func Partial1[A, B, C any](fn func(A, B) C, x A) func(B) C {
 	return func(y B) C {
 		return fn(x, y)

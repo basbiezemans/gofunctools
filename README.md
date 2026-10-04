@@ -33,38 +33,25 @@ import fn github.com/basbiezemans/gofunctools
 replacer := strings.NewReplacer(",", "", ".", "")
 sanitize := Pipe(strings.TrimSpace, replacer.Replace, strings.ToLower)
 
-text := "  Lorem ipsum dolor sit amet, consectetur.  "
+text := "  Lorem Ipsum dolor sit amet, consectetur.  "
 
 fmt.Println(sanitize(text))
 
 // Output: "lorem ipsum dolor sit amet consectetur"
 ```
-#### String tokenizer with Curry2, Flip
-```go
-split := Curry2(Flip(strings.Split))
-words := split(" ")
-
-text := "lorem ipsum dolor sit amet consectetur"
-
-fmt.Println(words(text))
-
-// Output: ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur"]
-```
-#### Sanitizer-tokenizer with Compose, Partial1, Flip
+#### Sanitizer-tokenizer with Compose
 ```go
 replacer := strings.NewReplacer(",", "", ".", "")
-tokenize := Compose(
-    Partial1(Flip(strings.Split), " "),
-    Compose(strings.ToLower, replacer.Replace),
-)
+sanitize := Compose(strings.ToLower, replacer.Replace)
+tokenize := Compose(strings.Fields, sanitize)
 
-text := "Lorem ipsum dolor sit amet, ...consectetur."
+text := "  Lorem Ipsum dolor sit amet, consectetur.  "
 
 fmt.Println(tokenize(text))
 
 // Output: ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur"]
 ```
-#### Word frequency counter with Partial2, FoldLeft
+#### Word frequency counter with Partial2 and FoldLeft
 ```go
 type frequency map[string]int
 
@@ -81,6 +68,28 @@ words := strings.Split(fruit, " ")
 fmt.Println(wordfreq(words))
 
 // Output: map["apple":2, "banana":2, "grapes":1, "kiwi":1, "mango":1, "pear":2]
+```
+#### Sum of squared even numbers with Compose, Partial1, Partial2, Map, Filter, and FoldLeft
+This pipeline filters the input, squares each remaining number, then folds the
+squares into a total.
+```go
+numbers := []int{1, 2, 3, 4, 5, 6}
+
+isEven := func(n int) bool { return n%2 == 0 }
+square := func(n int) int { return n * n }
+add := func(total, n int) int { return total + n }
+
+sumSquaresOfEven := Compose(
+    Partial2(FoldLeft, add, 0),
+    Compose(
+        Partial1(Map, square),
+        Partial1(Filter, isEven),
+    ),
+)
+
+fmt.Println(sumSquaresOfEven(numbers))
+
+// Output: 56
 ```
 #### Maximum consecutive group with GroupBy, Compose, Partial1, Map, and Filter
 This is a more elaborate example that requires two small helper functions to

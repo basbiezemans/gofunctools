@@ -281,6 +281,26 @@ func TestUnzipWith(t *testing.T) {
 	}
 }
 
+func TestPartial1PairUnzipWith(t *testing.T) {
+	type DataPoint struct {
+		date string
+		meas float64
+	}
+	split := func(datum DataPoint) (string, float64) {
+		return datum.date, datum.meas
+	}
+	datapoints := []DataPoint{
+		{"2021-01-15", 0.981}, {"2021-01-16", 0.973},
+	}
+	expect1 := []string{"2021-01-15", "2021-01-16"}
+	expect2 := []float64{0.981, 0.973}
+	unzip := Partial1Pair(UnzipWith, split)
+	result1, result2 := unzip(datapoints)
+	if !reflect.DeepEqual(result1, expect1) || !reflect.DeepEqual(result2, expect2) {
+		t.Errorf("Partial1Pair(UnzipWith, split)(%v) = %v, %v, expected %v, %v", datapoints, result1, result2, expect1, expect2)
+	}
+}
+
 func TestPipe(t *testing.T) {
 	input := "  Lorem ipsum dolor sit amet, consectetur  "
 	expect := "lorem-ipsum-dolor-sit-amet-consectetur"
@@ -362,6 +382,17 @@ func TestPartition(t *testing.T) {
 	result1, result2 := Partition(even, numbers)
 	if !reflect.DeepEqual(result1, expect1) || !reflect.DeepEqual(result2, expect2) {
 		t.Errorf("Partition(even, %v) = %v, %v, expected %v, %v", numbers, result1, result2, expect1, expect2)
+	}
+}
+
+func TestPartial1PairPartition(t *testing.T) {
+	numbers := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	expect1 := []int{0, 2, 4, 6, 8}
+	expect2 := []int{1, 3, 5, 7, 9}
+	splitEvenOdd := Partial1Pair(Partition, even)
+	result1, result2 := splitEvenOdd(numbers)
+	if !reflect.DeepEqual(result1, expect1) || !reflect.DeepEqual(result2, expect2) {
+		t.Errorf("Partial1Pair(Partition, even)(%v) = %v, %v, expected %v, %v", numbers, result1, result2, expect1, expect2)
 	}
 }
 

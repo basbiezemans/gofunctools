@@ -239,6 +239,16 @@ func Partial2[A, B, C, D any](fn func(A, B, C) D, x A, y B) func(C) D {
 	}
 }
 
+// Partial1Pair takes a binary function — which returns two values — and a
+// single value as an argument, and returns a unary version of the function
+// as the result. This is useful for creating partial versions of UnzipWith
+// and Partition.
+func Partial1Pair[A, B, C, D any](fn func(A, B) (C, D), x A) func(B) (C, D) {
+	return func(y B) (C, D) {
+		return fn(x, y)
+	}
+}
+
 // Flip converts a binary function to a function with the order of arguments
 // flipped.
 func Flip[A, B, C any](fn func(A, B) C) func(B, A) C {

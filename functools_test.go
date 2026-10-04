@@ -571,6 +571,35 @@ func TestGroupBy(t *testing.T) {
 	}
 }
 
+func TestDeleteBy(t *testing.T) {
+	type TestCase struct {
+		callb  func(int, int) bool
+		fname  string
+		value  int
+		input  []int
+		expect []int
+	}
+	eq := func(x, y int) bool { return x == y }
+	lte := func(x, y int) bool { return x <= y }
+	neq := func(x, y int) bool { return x != y }
+	testcases := []TestCase{
+		{eq, "eq", 0, []int{}, []int{}},
+		{eq, "eq", 0, []int{1, 2, 3, 4}, []int{1, 2, 3, 4}},
+		{eq, "eq", 1, []int{1, 2, 3, 4}, []int{2, 3, 4}},
+		{eq, "eq", 3, []int{1, 2, 3, 4}, []int{1, 2, 4}},
+		{eq, "eq", 4, []int{1, 2, 3, 4}, []int{1, 2, 3}},
+		{lte, "lte", 4, []int{1, 2, 3, 4, 5, 6, 7}, []int{1, 2, 3, 5, 6, 7}},
+		{neq, "neq", 5, []int{5, 5, 4, 3, 5, 2}, []int{5, 5, 3, 5, 2}},
+	}
+	errorMsg := "DeleteBy(%s, %v, %v) = %v, expected %v"
+	for _, test := range testcases {
+		result := DeleteBy(test.callb, test.value, test.input)
+		if !reflect.DeepEqual(result, test.expect) {
+			t.Errorf(errorMsg, test.fname, test.value, test.input, result, test.expect)
+		}
+	}
+}
+
 // Helper functions
 
 func even(x int) bool {

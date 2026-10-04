@@ -399,6 +399,17 @@ func GroupBy[A comparable](fn func(A, A) bool, xs []A) [][]A {
 	return append(ys, group)
 }
 
+// DeleteBy removes the first occurrence of an element from a list using an
+// equality predicate.
+func DeleteBy[A comparable](eq func(A, A) bool, x A, xs []A) []A {
+	for i, y := range xs {
+		if eq(x, y) {
+			return append(xs[:i], xs[i+1:]...)
+		}
+	}
+	return xs
+}
+
 // Returns the smallest integer greater than or equal to x/y
 // Example: 7/3 = (7 + 3 − 1) / 3 = 9/3 = 3
 func ceildiv(x, y int) int {

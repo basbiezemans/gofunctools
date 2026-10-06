@@ -228,14 +228,23 @@ func TestParallelMap(t *testing.T) {
 		input  []int
 		expect []int
 	}
+	var nilSlice []int = nil
+	var bigSlice = makeRange(0, 10_001)
 	testcases := []TestCase{
+		{nilSlice, []int{}},
 		{[]int{}, []int{}},
+		{[]int{1}, []int{2}},
+		{[]int{0, 1}, []int{0, 2}},
 		{[]int{1, 2, 3, 4}, []int{2, 4, 6, 8}},
+		{bigSlice, Map(double, bigSlice)},
 	}
 	for _, tc := range testcases {
 		result := ParallelMap(double, tc.input)
 		if !reflect.DeepEqual(result, tc.expect) {
-			t.Errorf("ParallelMap(double, %v) = %v, expected %v", tc.input, result, tc.expect)
+			s1 := sliceToString(tc.input, 5)
+			s2 := sliceToString(result, 5)
+			s3 := sliceToString(tc.expect, 5)
+			t.Errorf("ParallelMap(double, %s) = %s, expected %s", s1, s2, s3)
 		}
 	}
 }
@@ -778,4 +787,13 @@ func funcName[T, U any](fn func(T, U) T) string {
 		return str
 	}
 	return "N/A"
+}
+
+func sliceToString[T any](s []T, limit int) string {
+	if len(s) <= limit {
+		return fmt.Sprintf("%v", s)
+	} else {
+		str := fmt.Sprintf("%v", s[:limit])
+		return str[:len(str)-1] + " ...]"
+	}
 }

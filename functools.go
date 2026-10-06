@@ -240,9 +240,9 @@ func Partial2[A, B, C, D any](fn func(A, B, C) D, x A, y B) func(C) D {
 }
 
 // Partial1Pair takes a binary function — which returns two values — and a
-// single value as an argument, and returns a unary version of the function
-// as the result. This is useful for creating partial versions of UnzipWith
-// and Partition.
+// single value as an argument, and returns a unary function as its result.
+// It is a modified version of Partial1 that allows for the partial
+// application of Partition and UnzipWith.
 func Partial1Pair[A, B, C, D any](fn func(A, B) (C, D), x A) func(B) (C, D) {
 	return func(y B) (C, D) {
 		return fn(x, y)

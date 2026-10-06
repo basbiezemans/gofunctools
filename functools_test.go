@@ -138,9 +138,13 @@ func TestFoldLeft(t *testing.T) {
 		input  []int
 		expect int
 	}
+	intdiv := func(acc, v int) int { return acc / v }
 	testcases := []TestCase{
+		{add, 0, []int{}, 0},
+		{add, 0, []int{1}, 1},
 		{add, 0, []int{1, 2, 3, 4}, 10},
-		{add, 42, []int{}, 42},
+		{multiply, 1, []int{1, 2, 3, 4}, 24},
+		{intdiv, 100, []int{2, 2, 5}, 5},
 		{subtract, 100, []int{1, 2, 3, 4}, 90},
 	}
 	errorMsg := "FoldLeft(%s, %v, %v) = %v, expected %v"
@@ -177,9 +181,13 @@ func TestFoldRight(t *testing.T) {
 		input  []int
 		expect int
 	}
+	intdiv := func(v, acc int) int { return acc / v }
 	testcases := []TestCase{
+		{add, 0, []int{}, 0},
+		{add, 0, []int{1}, 1},
 		{add, 0, []int{1, 2, 3, 4}, 10},
-		{add, 42, []int{}, 42},
+		{multiply, 1, []int{1, 2, 3, 4}, 24},
+		{intdiv, 100, []int{2, 2, 5}, 5},
 		{subtract, 100, []int{1, 2, 3, 4}, 98},
 	}
 	errorMsg := "FoldRight(%s, %v, %v) = %v, expected %v"

@@ -353,7 +353,7 @@ func TestUnzipWith(t *testing.T) {
 
 	result1, result2 := UnzipWith(split, datapoints)
 	if !reflect.DeepEqual(result1, expect1) || !reflect.DeepEqual(result2, expect2) {
-		t.Errorf("UnZipWith(split, %v) = %v, %v, expected %v, %v", datapoints, result1, result2, expect1, expect2)
+		t.Errorf("UnzipWith(split, %v) = %v, %v, expected %v, %v", datapoints, result1, result2, expect1, expect2)
 	}
 }
 

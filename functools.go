@@ -70,6 +70,35 @@ func ReduceRight[A any](fn func(A, A) A, xs []A) A {
 	return FoldRight(fn, xs[n], xs[:n])
 }
 
+// Reduce, applied to a reducer function and a non-empty slice, reduces the
+// slice to a single value in parallel. This function is non-total and will
+// panic if the slice happens to be empty.
+//   - The reducer function must be associative because the parallel
+//     implementation may change the grouping of values. It must also be safe
+//     for concurrent use.
+//   - A panic in the reducer function may terminate the program.
+func Reduce[A any](fn func(A, A) A, xs []A) A {
+	if len(xs) == 0 {
+		panic("empty slice")
+	}
+	var routines = min(runtime.GOMAXPROCS(0)*4, len(xs))
+	var chunkSize = ceildiv(len(xs), routines)
+	var chunkCount = ceildiv(len(xs), chunkSize)
+	var slice = make([]A, chunkCount)
+	var index = 0
+	var wg sync.WaitGroup
+	wg.Add(chunkCount)
+	for chunk := range slices.Chunk(xs, chunkSize) {
+		go func(chunk []A, chunkIndex int) {
+			defer wg.Done()
+			slice[chunkIndex] = ReduceLeft(fn, chunk)
+		}(chunk, index)
+		index++
+	}
+	wg.Wait()
+	return ReduceLeft(fn, slice)
+}
+
 // Map applies a unary function to each element of a slice.
 func Map[A, B any](fn func(A) B, xs []A) []B {
 	var ys = make([]B, len(xs))

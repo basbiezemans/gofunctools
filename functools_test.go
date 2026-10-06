@@ -486,21 +486,29 @@ func TestHashMapToSlice(t *testing.T) {
 		fst string
 		snd int
 	}
-	asTuple2 := func(fst string, snd int) Tuple2 {
+	type TestCase struct {
+		input  map[string]int
+		expect []Tuple2
+	}
+	newTuple2 := func(fst string, snd int) Tuple2 {
 		return Tuple2{fst, snd}
 	}
-	items := map[string]int{
-		"lorem": 1, "ipsum": 2, "dolor": 3,
+	testcases := []TestCase{
+		{
+			map[string]int{}, []Tuple2{},
+		}, {
+			map[string]int{"lorem": 1, "ipsum": 2, "dolor": 3},
+			[]Tuple2{{"lorem", 1}, {"ipsum", 2}, {"dolor", 3}},
+		},
 	}
-	expect := []Tuple2{
-		{"lorem", 1}, {"ipsum", 2}, {"dolor", 3},
-	}
-	result := HashMapToSlice(asTuple2, items)
-	sort.SliceStable(result, func(i, j int) bool {
-		return result[i].snd < result[j].snd
-	})
-	if !reflect.DeepEqual(result, expect) {
-		t.Errorf("MapToSlice(%v, asTuple2) = %v, expected %v", items, result, expect)
+	for _, test := range testcases {
+		result := HashMapToSlice(newTuple2, test.input)
+		sort.SliceStable(result, func(i, j int) bool {
+			return result[i].snd < result[j].snd
+		})
+		if !reflect.DeepEqual(result, test.expect) {
+			t.Errorf("HashMapToSlice(asTuple2, %v) = %v, expected %v", test.input, result, test.expect)
+		}
 	}
 }
 
@@ -509,18 +517,29 @@ func TestSliceToHashMap(t *testing.T) {
 		fst string
 		snd int
 	}
-	kvSplit := func(tuple Tuple2) (string, int) {
+	type TestCase struct {
+		input  []Tuple2
+		expect map[string]int
+	}
+	split := func(tuple Tuple2) (string, int) {
 		return tuple.fst, tuple.snd
 	}
-	items := []Tuple2{
-		{"lorem", 1}, {"ipsum", 2}, {"dolor", 3},
+	testcases := []TestCase{
+		{
+			[]Tuple2{}, map[string]int{},
+		}, {
+			[]Tuple2{{"a", 1}, {"b", 2}, {"a", 3}},
+			map[string]int{"a": 3, "b": 2},
+		}, {
+			[]Tuple2{{"lorem", 1}, {"ipsum", 2}, {"dolor", 3}},
+			map[string]int{"lorem": 1, "ipsum": 2, "dolor": 3},
+		},
 	}
-	expect := map[string]int{
-		"lorem": 1, "ipsum": 2, "dolor": 3,
-	}
-	result := SliceToHashMap(kvSplit, items)
-	if !reflect.DeepEqual(result, expect) {
-		t.Errorf("SliceToMap(%v, kvSplit) = %v, expected %v", items, result, expect)
+	for _, test := range testcases {
+		result := SliceToHashMap(split, test.input)
+		if !reflect.DeepEqual(result, test.expect) {
+			t.Errorf("SliceToHashMap(split, %v) = %v, expected %v", test.input, result, test.expect)
+		}
 	}
 }
 

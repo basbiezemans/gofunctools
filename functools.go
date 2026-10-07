@@ -123,9 +123,9 @@ func MapMaybe[A, B any](fn func(A) (B, error), xs []A) []B {
 // ParallelMap applies a unary function to each element of a slice in parallel.
 //   - ParallelMap is a drop-in replacement for Map. It incurs slightly more
 //     overhead than Map, but is faster with larger inputs and a CPU-intensive
-//     callback.
-//   - If a callback triggers a panic, the output slice will have the default
-//     (zero) value for that specific index.
+//     mapper function.
+//   - If a mapper function triggers a panic, the output slice will have the
+//     default (zero) value for that specific element.
 func ParallelMap[A, B any](fn func(A) B, xs []A) []B {
 	if len(xs) == 0 {
 		return []B{}

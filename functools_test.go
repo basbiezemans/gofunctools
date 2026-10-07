@@ -95,7 +95,7 @@ func TestReduceRightEmptyPanics(t *testing.T) {
 	ReduceRight(subtract, []int{})
 }
 
-func TestReduce(t *testing.T) {
+func TestParallelReduce(t *testing.T) {
 	type TestCase struct {
 		callb  func(int, int) int
 		input  []int
@@ -108,7 +108,7 @@ func TestReduce(t *testing.T) {
 		{add, makeRange(0, 10_001), 50_005_000},
 	}
 	for _, tc := range testcases {
-		result := Reduce(tc.callb, tc.input)
+		result := ParallelReduce(tc.callb, tc.input)
 		if result != tc.expect {
 			fname := funcName(tc.callb)
 			xs := ""
@@ -122,13 +122,13 @@ func TestReduce(t *testing.T) {
 	}
 }
 
-func TestReduceEmptyPanics(t *testing.T) {
+func TestParallelReduceEmptyPanics(t *testing.T) {
 	defer func() {
 		if recover() == nil {
 			t.Error("Reduce did not panic")
 		}
 	}()
-	Reduce(add, []int{})
+	ParallelReduce(add, []int{})
 }
 
 func TestFoldLeft(t *testing.T) {

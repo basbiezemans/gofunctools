@@ -70,14 +70,14 @@ func ReduceRight[A any](fn func(A, A) A, xs []A) A {
 	return FoldRight(fn, xs[n], xs[:n])
 }
 
-// Reduce, applied to a reducer function and a non-empty slice, reduces the
-// slice to a single value in parallel. This function is non-total and will
+// ParallelReduce, applied to a reducer function and a non-empty slice, reduces
+// the slice to a single value in parallel. This function is non-total and will
 // panic if the slice happens to be empty.
 //   - The reducer function must be associative because the parallel
 //     implementation may change the grouping of values. It must also be safe
 //     for concurrent use.
 //   - A panic in the reducer function may terminate the program.
-func Reduce[A any](fn func(A, A) A, xs []A) A {
+func ParallelReduce[A any](fn func(A, A) A, xs []A) A {
 	if len(xs) == 0 {
 		panic("empty slice")
 	}

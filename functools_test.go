@@ -380,11 +380,11 @@ func TestPartial1PairUnzipWith(t *testing.T) {
 func TestPipe(t *testing.T) {
 	input := "  Lorem ipsum dolor sit amet, consectetur  "
 	expect := "lorem-ipsum-dolor-sit-amet-consectetur"
-	rep := strings.NewReplacer(",", "", ".", "", " ", "-")
-	slugify := Pipe(strings.TrimSpace, rep.Replace, strings.ToLower)
+	replacer := strings.NewReplacer(",", "", ".", "", " ", "-")
+	slugify := Pipe(strings.TrimSpace, replacer.Replace, strings.ToLower)
 	result := slugify(input)
 	if result != expect {
-		t.Errorf("Pipe(s.TrimSpace, r.Replace, s.ToLower)(%q) = %q, expected %q", input, result, expect)
+		t.Errorf("Pipe(TrimSpace, Replace, ToLower)(%q) = %q, expected %q", input, result, expect)
 	}
 }
 
@@ -393,16 +393,16 @@ func TestCompose(t *testing.T) {
 	expect := []string{
 		"lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
 	}
-	rep := strings.NewReplacer(",", "", ".", "")
+	replacer := strings.NewReplacer(",", "", ".", "")
 	split := func(sep string) func(string) []string {
 		return func(s string) []string {
 			return strings.Split(s, sep)
 		}
 	}
-	tokenize := Compose(split(" "), Compose(strings.ToLower, rep.Replace))
+	tokenize := Compose(split(" "), Compose(strings.ToLower, replacer.Replace))
 	result := tokenize(input)
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Compose(split(" "), Compose(s.ToLower, r.Replace))(%q) = %#v, expected %#v`, input, result, expect)
+		t.Errorf(`Compose(split(" "), Compose(ToLower, Replace))(%q) = %#v, expected %#v`, input, result, expect)
 	}
 }
 
@@ -415,7 +415,7 @@ func TestFlipCurry2(t *testing.T) {
 	words := split(" ")
 	result := words(input)
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Curry2(Flip(s.Split))(" ")(%q) = %#v, expected %#v`, input, result, expect)
+		t.Errorf(`Curry2(Flip(Split))(" ")(%q) = %#v, expected %#v`, input, result, expect)
 	}
 }
 
@@ -425,7 +425,7 @@ func TestCurry3(t *testing.T) {
 	splitN := Curry3(strings.SplitN)(input)(", ")
 	result := splitN(2) // at most 2 substrings; the last substring is the unsplit remainder
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Curry3(s.SplitN)(%q)(",")(2) = %#v, expected %#v`, input, result, expect)
+		t.Errorf(`Curry3(SplitN)(%q)(",")(2) = %#v, expected %#v`, input, result, expect)
 	}
 }
 
@@ -437,7 +437,7 @@ func TestFlipPartial1(t *testing.T) {
 	words := Partial1(Flip(strings.Split), " ")
 	result := words(input)
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Partial1(Flip(s.Split), " ")(%q) = %#v, expected %#v`, input, result, expect)
+		t.Errorf(`Partial1(Flip(Split), " ")(%q) = %#v, expected %#v`, input, result, expect)
 	}
 }
 
@@ -447,7 +447,7 @@ func TestPartial2(t *testing.T) {
 	splitN := Partial2(strings.SplitN, input, ", ")
 	result := splitN(2) // at most 2 substrings; the last substring is the unsplit remainder
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Partial2(s.SplitN, %q, ",")(2) = %#v, expected %#v`, input, result, expect)
+		t.Errorf(`Partial2(SplitN, %q, ",")(2) = %#v, expected %#v`, input, result, expect)
 	}
 }
 
@@ -609,7 +609,8 @@ func TestScanLeft(t *testing.T) {
 	for _, test := range testcases {
 		result := ScanLeft(test.callb, test.init, test.input)
 		if !reflect.DeepEqual(result, test.expect) {
-			t.Errorf(errorMsg, funcName(test.callb), test.init, test.input, result, test.expect)
+			fname := funcName(test.callb)
+			t.Errorf(errorMsg, fname, test.init, test.input, result, test.expect)
 		}
 	}
 	prepend := func(s string, r rune) string {
@@ -674,7 +675,6 @@ func TestConcatMap(t *testing.T) {
 func TestGroupBy(t *testing.T) {
 	type TestCase struct {
 		callb  func(int, int) bool
-		fname  string
 		input  []int
 		expect [][]int
 	}
@@ -683,16 +683,19 @@ func TestGroupBy(t *testing.T) {
 	gt := func(x, y int) bool { return x > y }
 	lt5 := func(x, y int) bool { return y-x < 5 }
 	testcases := []TestCase{
-		{eq, "equal", []int{}, [][]int{}},
-		{neq, "not-equal", []int{1, 1, 1, 2, 3, 1, 4, 4, 5}, [][]int{{1}, {1}, {1, 2, 3}, {1, 4, 4, 5}}},
-		{gt, "greater-than", []int{1, 3, 5, 1, 4, 2, 6, 5, 4}, [][]int{{1}, {3}, {5, 1, 4, 2}, {6, 5, 4}}},
-		{lt5, "subtract-lt5", makeRange(0, 20), [][]int{{0, 1, 2, 3, 4}, {5, 6, 7, 8, 9}, {10, 11, 12, 13, 14}, {15, 16, 17, 18, 19}}},
+		{eq, []int{}, [][]int{}},
+		{eq, []int{1, 1, 1, 1}, [][]int{{1, 1, 1, 1}}},
+		{eq, []int{1, 2, 2, 1}, [][]int{{1}, {2, 2}, {1}}},
+		{neq, []int{1, 1, 1, 2, 3, 1, 4, 4, 5}, [][]int{{1}, {1}, {1, 2, 3}, {1, 4, 4, 5}}},
+		{gt, []int{1, 3, 5, 1, 4, 2, 6, 5, 4}, [][]int{{1}, {3}, {5, 1, 4, 2}, {6, 5, 4}}},
+		{lt5, makeRange(0, 20), [][]int{{0, 1, 2, 3, 4}, {5, 6, 7, 8, 9}, {10, 11, 12, 13, 14}, {15, 16, 17, 18, 19}}},
 	}
 	errorMsg := "GroupBy(%s, %v) = %v, expected %v"
 	for _, tc := range testcases {
 		result := GroupBy(tc.callb, tc.input)
 		if !reflect.DeepEqual(result, tc.expect) {
-			t.Errorf(errorMsg, tc.fname, tc.input, result, tc.expect)
+			fname := funcName(tc.callb)
+			t.Errorf(errorMsg, fname, tc.input, result, tc.expect)
 		}
 	}
 }
@@ -700,7 +703,6 @@ func TestGroupBy(t *testing.T) {
 func TestDeleteBy(t *testing.T) {
 	type TestCase struct {
 		callb  func(int, int) bool
-		fname  string
 		value  int
 		input  []int
 		expect []int
@@ -709,19 +711,20 @@ func TestDeleteBy(t *testing.T) {
 	lte := func(x, y int) bool { return x <= y }
 	neq := func(x, y int) bool { return x != y }
 	testcases := []TestCase{
-		{eq, "eq", 0, []int{}, []int{}},
-		{eq, "eq", 0, []int{1, 2, 3, 4}, []int{1, 2, 3, 4}},
-		{eq, "eq", 1, []int{1, 2, 3, 4}, []int{2, 3, 4}},
-		{eq, "eq", 3, []int{1, 2, 3, 4}, []int{1, 2, 4}},
-		{eq, "eq", 4, []int{1, 2, 3, 4}, []int{1, 2, 3}},
-		{lte, "lte", 4, []int{1, 2, 3, 4, 5, 6, 7}, []int{1, 2, 3, 5, 6, 7}},
-		{neq, "neq", 5, []int{5, 5, 4, 3, 5, 2}, []int{5, 5, 3, 5, 2}},
+		{eq, 0, []int{}, []int{}},
+		{eq, 0, []int{1, 2, 3, 4}, []int{1, 2, 3, 4}},
+		{eq, 1, []int{1, 2, 3, 4}, []int{2, 3, 4}},
+		{eq, 3, []int{1, 3, 3, 4}, []int{1, 3, 4}},
+		{eq, 4, []int{1, 2, 3, 4}, []int{1, 2, 3}},
+		{lte, 4, []int{1, 2, 3, 4, 5, 6, 7}, []int{1, 2, 3, 5, 6, 7}},
+		{neq, 5, []int{5, 5, 4, 3, 5, 2}, []int{5, 5, 3, 5, 2}},
 	}
 	errorMsg := "DeleteBy(%s, %v, %v) = %v, expected %v"
 	for _, test := range testcases {
 		result := DeleteBy(test.callb, test.value, test.input)
 		if !reflect.DeepEqual(result, test.expect) {
-			t.Errorf(errorMsg, test.fname, test.value, test.input, result, test.expect)
+			fname := funcName(test.callb)
+			t.Errorf(errorMsg, fname, test.value, test.input, result, test.expect)
 		}
 	}
 }
@@ -807,7 +810,7 @@ func last[T any](xs []T) (T, error) {
 	return zero, errors.New("empty slice")
 }
 
-func funcName[T, U any](fn func(T, U) T) string {
+func funcName(fn any) string {
 	var fptr = reflect.ValueOf(fn).Pointer()
 	var fname = runtime.FuncForPC(fptr).Name()
 	if str, err := last(strings.Split(fname, ".")); err == nil {

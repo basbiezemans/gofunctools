@@ -324,7 +324,8 @@ func HashMapToSlice[A comparable, B, C any](fn func(A, B) C, hm map[A]B) []C {
 }
 
 // SliceToHashMap, applied to a slice and a splitter function, creates a
-// hash map with elements from the slice splitted as key-value pairs.
+// hash map with elements from the slice splitted as key-value pairs. The
+// generated key type must be comparable.
 func SliceToHashMap[A comparable, B, C any](fn func(B) (A, C), xs []B) map[A]C {
 	var hm = make(map[A]C, len(xs))
 	for _, x := range xs {
@@ -334,9 +335,10 @@ func SliceToHashMap[A comparable, B, C any](fn func(B) (A, C), xs []B) map[A]C {
 	return hm
 }
 
-// Unfold, builds a slice from a seed value. The function takes the element and
-// returns (,,false) if it is done producing the slice or returns (a,b,true),
-// in which case, a is appended to the slice and b is used as the next element.
+// Unfold, builds a slice from a seed value. The function takes the current
+// input value as seed and returns (output, next-seed, ok). If ok is false,
+// the slice is complete; if ok is true, the output value is appended to the
+// slice and the seed value is used next.
 func Unfold[A, B any](fn func(B) (A, B, bool), initValue B) []A {
 	var xs = make([]A, 0)
 	var x, next, ok = fn(initValue)
@@ -347,8 +349,9 @@ func Unfold[A, B any](fn func(B) (A, B, bool), initValue B) []A {
 	return xs
 }
 
-// Find, takes a predicate and a slice and returns the first element in the slice
-// matching the predicate (a,true), or (zero,false) if there is no such element.
+// Find, takes a predicate and a slice and returns the first element in the
+// slice matching the predicate (a,true), or (zero,false) if there is no such
+// element. The element type must be comparable.
 func Find[A comparable](fn func(A) bool, xs []A) (A, bool) {
 	var zero A
 	for _, x := range xs {
@@ -361,7 +364,7 @@ func Find[A comparable](fn func(A) bool, xs []A) (A, bool) {
 
 // FindIndex, takes a predicate and a slice and returns the index of the first
 // element in the slice satisfying the predicate (index,true), or (-1,false) if
-// there is no such element.
+// there is no such element. The element type must be comparable.
 func FindIndex[A comparable](fn func(A) bool, xs []A) (int, bool) {
 	for i, x := range xs {
 		if fn(x) {
@@ -372,7 +375,8 @@ func FindIndex[A comparable](fn func(A) bool, xs []A) (int, bool) {
 }
 
 // FindIndices, extends FindIndex, by returning the indices of all elements
-// satisfying the predicate, in ascending order.
+// satisfying the predicate, in ascending order. The element type must be
+// comparable.
 func FindIndices[A comparable](fn func(A) bool, xs []A) []int {
 	var ys = make([]int, 0)
 	for i, x := range xs {
@@ -419,6 +423,7 @@ func ConcatMap[A, B any](fn func(A) []B, xs []A) []B {
 // GroupBy groups consecutive elements of a slice into subslices, using the
 // specified equivalence relation to determine equality. Equality is checked
 // against the first element in the group, not against the nearest neighbour.
+// The element type must be comparable.
 func GroupBy[A comparable](eq func(A, A) bool, xs []A) [][]A {
 	var ys = make([][]A, 0)
 	if len(xs) == 0 {
@@ -438,8 +443,8 @@ func GroupBy[A comparable](eq func(A, A) bool, xs []A) [][]A {
 	return append(ys, group)
 }
 
-// DeleteBy removes the first occurrence of an element from a list using an
-// equality predicate.
+// DeleteBy removes the first occurrence of an element from a slice using an
+// equality predicate. The element type must be comparable.
 func DeleteBy[A comparable](eq func(A, A) bool, x A, xs []A) []A {
 	for i, y := range xs {
 		if eq(x, y) {

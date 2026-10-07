@@ -81,8 +81,8 @@ func Reduce[A any](fn func(A, A) A, xs []A) A {
 	if len(xs) == 0 {
 		panic("empty slice")
 	}
-	var routines = min(runtime.GOMAXPROCS(0)*4, len(xs))
-	var chunkSize = ceildiv(len(xs), routines)
+	var maxProcs = min(runtime.GOMAXPROCS(0)*4, len(xs))
+	var chunkSize = ceildiv(len(xs), maxProcs)
 	var chunkCount = ceildiv(len(xs), chunkSize)
 	var slice = make([]A, chunkCount)
 	var index = 0
@@ -130,8 +130,8 @@ func ParallelMap[A, B any](fn func(A) B, xs []A) []B {
 	if len(xs) == 0 {
 		return []B{}
 	}
-	var routines = min(runtime.GOMAXPROCS(0)*4, len(xs))
-	var chunkSize = ceildiv(len(xs), routines)
+	var maxProcs = min(runtime.GOMAXPROCS(0)*4, len(xs))
+	var chunkSize = ceildiv(len(xs), maxProcs)
 	var chunkCount = ceildiv(len(xs), chunkSize)
 	var slice = make([]B, len(xs))
 	var index = 0

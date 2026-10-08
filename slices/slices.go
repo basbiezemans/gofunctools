@@ -17,11 +17,8 @@ func Any[A any](fn func(A) bool, xs []A) bool {
 // All, applied to a predicate and a slice, determines whether all elements of
 // the slice satisfy the predicate.
 func All[A any](fn func(A) bool, xs []A) bool {
-	var n = len(xs)
-	for i, j := 0, n-1; i <= j; i, j = i+1, j-1 {
-		if fn(xs[i]) && fn(xs[j]) {
-			continue
-		} else {
+	for _, x := range xs {
+		if !fn(x) {
 			return false
 		}
 	}

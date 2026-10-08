@@ -11,13 +11,7 @@ import (
 // Any, applied to a predicate and a slice, determines whether any element of
 // the slice satisfies the predicate.
 func Any[A any](fn func(A) bool, xs []A) bool {
-	var n = len(xs)
-	for i, j := 0, n-1; i <= j; i, j = i+1, j-1 {
-		if fn(xs[i]) || fn(xs[j]) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(xs, fn)
 }
 
 // All, applied to a predicate and a slice, determines whether all elements of

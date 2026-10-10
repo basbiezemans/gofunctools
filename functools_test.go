@@ -440,6 +440,16 @@ func TestCurry3(t *testing.T) {
 	}
 }
 
+func TestUncurry(t *testing.T) {
+	input := "Lorem ipsum, dolor sit amet, consectetur."
+	expect := []string{"Lorem ipsum", "dolor sit amet, consectetur."}
+	splitN := Uncurry(Curry3(strings.SplitN)(input))
+	result := splitN(", ", 2) // at most 2 substrings; the last substring is the unsplit remainder
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf(`Curry3(SplitN)(%q)(",")(2) = %#v, expected %#v`, input, result, expect)
+	}
+}
+
 func TestFlipPartial1(t *testing.T) {
 	input := "lorem ipsum dolor sit amet consectetur"
 	expect := []string{

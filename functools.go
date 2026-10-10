@@ -232,6 +232,13 @@ func Compose[A, B, C any](f1 func(B) C, f2 func(A) B) func(A) C {
 	}
 }
 
+// Curry1 converts an uncurried, unary function to a curried function.
+func Curry1[A, B any](fn func(A) B) func(A) B {
+	return func(x A) B {
+		return fn(x)
+	}
+}
+
 // Curry2 converts an uncurried, binary function to a curried function.
 func Curry2[A, B, C any](fn func(A, B) C) func(A) func(B) C {
 	return func(x A) func(B) C {

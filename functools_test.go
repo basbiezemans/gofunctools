@@ -405,6 +405,18 @@ func TestCompose(t *testing.T) {
 	}
 }
 
+func TestCurry1(t *testing.T) {
+	input := "lorem ipsum dolor sit amet consectetur"
+	expect := []string{
+		"lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
+	}
+	tokenize := Curry1(strings.Fields)
+	result := tokenize(input)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf(`Curry1(Fields)(%q) = %#v, expected %#v`, input, result, expect)
+	}
+}
+
 func TestFlipCurry2(t *testing.T) {
 	input := "lorem ipsum dolor sit amet consectetur"
 	expect := []string{

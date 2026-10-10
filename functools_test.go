@@ -446,7 +446,7 @@ func TestUncurry(t *testing.T) {
 	splitN := Uncurry(Curry3(strings.SplitN)(input))
 	result := splitN(", ", 2) // at most 2 substrings; the last substring is the unsplit remainder
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Curry3(SplitN)(%q)(",")(2) = %#v, expected %#v`, input, result, expect)
+		t.Errorf(`Uncurry(Curry3(SplitN)(%q))(",", 2) = %#v, expected %#v`, input, result, expect)
 	}
 }
 

@@ -313,28 +313,6 @@ func Count[A any](fn func(A) bool, xs []A) int {
 	return k
 }
 
-// HashMapToSlice, applied to a hash map and a combiner function, combines
-// key-value pairs as elements of a new slice.
-func HashMapToSlice[A comparable, B, C any](fn func(A, B) C, hm map[A]B) []C {
-	var xs = make([]C, 0, len(hm))
-	for k, v := range hm {
-		xs = append(xs, fn(k, v))
-	}
-	return xs
-}
-
-// SliceToHashMap, applied to a slice and a splitter function, creates a
-// hash map with elements from the slice splitted as key-value pairs. The
-// generated key type must be comparable.
-func SliceToHashMap[A comparable, B, C any](fn func(B) (A, C), xs []B) map[A]C {
-	var hm = make(map[A]C, len(xs))
-	for _, x := range xs {
-		k, v := fn(x)
-		hm[k] = v
-	}
-	return hm
-}
-
 // Unfold, builds a slice from a seed value. The function takes the current
 // input value as seed and returns (output, next-seed, ok). If ok is false,
 // the slice is complete; if ok is true, the output value is appended to the

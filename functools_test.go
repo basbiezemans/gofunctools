@@ -472,6 +472,16 @@ func TestPartial2(t *testing.T) {
 	}
 }
 
+func TestPartial2Rotate(t *testing.T) {
+	input := "Lorem ipsum, dolor sit amet, consectetur."
+	expect := []string{"Lorem ipsum", "dolor sit amet, consectetur."}
+	split2 := Partial2(Rotate(strings.SplitN), ", ", 2)
+	result := split2(input)
+	if !reflect.DeepEqual(result, expect) {
+		t.Errorf(`Partial2(Rotate(SplitN), ",", 2)(%q) = %#v, expected %#v`, input, result, expect)
+	}
+}
+
 func TestPartition(t *testing.T) {
 	numbers := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	expect1 := []int{0, 2, 4, 6, 8}

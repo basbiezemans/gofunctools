@@ -300,6 +300,14 @@ func Flip[A, B, C any](fn func(A, B) C) func(B, A) C {
 	}
 }
 
+// Rotate takes a ternary function and rotates the arguments to the left by
+// one position.
+func Rotate[A, B, C, D any](fn func(A, B, C) D) func(B, C, A) D {
+	return func(x B, y C, z A) D {
+		return fn(z, x, y)
+	}
+}
+
 // Partition takes a predicate and a slice, and splits the elements into two
 // slices which do and do not satisfy the predicate.
 func Partition[A any](fn func(A) bool, xs []A) ([]A, []A) {

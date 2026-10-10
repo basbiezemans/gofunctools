@@ -95,7 +95,7 @@ fmt.Println(sumSquaresOfEven(numbers))
 This is a more elaborate example that requires two small helper functions to
 carry out the task. We want to find a segment containing the maximum number of
 consecutive identical elements from a sequence of numbers. In this example, we
-choose the first result.
+will choose the first result.
 ```go
 numbers := []int{1, 1, 3, 3, 3, 1, 4, 4, 4, 5}
 

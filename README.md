@@ -104,7 +104,7 @@ func equal(a, b int) bool {
 }
 
 func length(s []int) int {
-	return len(s)
+    return len(s)
 }
 
 // A slice of groups with consecutive equal elements

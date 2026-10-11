@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"reflect"
 	"runtime"
+	"slices"
 	"strings"
 	"testing"
 	"unicode"
@@ -110,12 +111,7 @@ func TestParallelReduce(t *testing.T) {
 		result := ParallelReduce(tc.callb, tc.input)
 		if result != tc.expect {
 			fname := funcName(tc.callb)
-			xs := ""
-			if len(tc.input) > 5 {
-				xs = "[...]"
-			} else {
-				xs = fmt.Sprintf("%v", tc.input)
-			}
+			xs := sliceToString(tc.input, 5)
 			t.Errorf("Reduce(%s, %s) = %d, expected %d", fname, xs, result, tc.expect)
 		}
 	}
@@ -413,11 +409,11 @@ func TestCurry1(t *testing.T) {
 	tokenize := Curry1(strings.Fields)
 	result := tokenize(input)
 	if !reflect.DeepEqual(result, expect) {
-		t.Errorf(`Curry1(Fields)(%q) = %#v, expected %#v`, input, result, expect)
+		t.Errorf("Curry1(Fields)(%q) = %#v, expected %#v", input, result, expect)
 	}
 }
 
-func TestFlipCurry2(t *testing.T) {
+func TestCurry2Flip(t *testing.T) {
 	input := "lorem ipsum dolor sit amet consectetur"
 	expect := []string{
 		"lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
@@ -450,7 +446,7 @@ func TestUncurry(t *testing.T) {
 	}
 }
 
-func TestFlipPartial1(t *testing.T) {
+func TestPartial1Flip(t *testing.T) {
 	input := "lorem ipsum dolor sit amet consectetur"
 	expect := []string{
 		"lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
@@ -762,12 +758,7 @@ func showRunes(rs []rune) []string {
 
 func isOneOf[T comparable](xs []T) func(T) bool {
 	return func(e T) bool {
-		for _, x := range xs {
-			if x == e {
-				return true
-			}
-		}
-		return false
+		return slices.Contains(xs, e)
 	}
 }
 

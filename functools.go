@@ -404,8 +404,8 @@ func ScanRight[A, B any](fn func(A, B) B, initValue B, xs []A) []B {
 	var n = len(xs)
 	var ys = make([]B, 1+n)
 	ys[n] = initValue
-	for i := n; i > 0; i-- {
-		ys[i-1] = fn(xs[i-1], ys[i])
+	for i, x := range slices.Backward(xs) {
+		ys[i] = fn(x, ys[i+1])
 	}
 	return ys
 }

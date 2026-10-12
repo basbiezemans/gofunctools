@@ -226,6 +226,40 @@ func TestMapMaybe(t *testing.T) {
 	}
 }
 
+func TestTryMap(t *testing.T) {
+	type TestCase struct {
+		callb  func(int) (int, error)
+		input  []int
+		expect []int
+		errval error
+	}
+	add2 := func(x int) (int, error) { return x + 2, nil }
+	fail := func(x int) (int, error) { return 0, errors.New("fail") }
+	failIfZero := func(x int) (int, error) {
+		if x == 0 {
+			return 0, errors.New("0")
+		} else {
+			return x, nil
+		}
+	}
+	testcases := []TestCase{
+		{add2, []int{1, 2, 3}, []int{3, 4, 5}, nil},
+		{fail, []int{1, 2, 3}, nil, errors.New("fail")},
+		{failIfZero, []int{1, 2, 0, 3}, nil, errors.New("0")},
+	}
+	for _, test := range testcases {
+		result, err := TryMap(test.callb, test.input)
+		if err == nil && test.errval != nil {
+			nilError := "TryMap(%s, %v) = %v, %v; expected an error"
+			t.Errorf(nilError, funcName(test.callb), test.input, result, err)
+		}
+		if !reflect.DeepEqual(result, test.expect) {
+			resultError := "TryMap(%s, %v) = %v, %v; expected %v, <nil>"
+			t.Errorf(resultError, funcName(test.callb), test.input, result, err, test.expect)
+		}
+	}
+}
+
 func TestParallelMap(t *testing.T) {
 	type TestCase struct {
 		input  []int

@@ -120,6 +120,23 @@ func MapMaybe[A, B any](fn func(A) (B, error), xs []A) []B {
 	return ys
 }
 
+// TryMap applies a unary function, which can fail, to each element of a
+// slice. If the function succeeds for all elements then a slice with the
+// new values is returned. If the function fails for any of the elements
+// then the error is returned immediately. None of the slice elements are
+// processed after one returns an error.
+func TryMap[A, B any](fn func(A) (B, error), xs []A) ([]B, error) {
+	var ys = make([]B, 0, len(xs))
+	for _, x := range xs {
+		if y, err := fn(x); err != nil {
+			return nil, err
+		} else {
+			ys = append(ys, y)
+		}
+	}
+	return ys, nil
+}
+
 // ParallelMap applies a unary function to each element of a slice in parallel.
 //   - ParallelMap is a drop-in replacement for Map. It incurs slightly more
 //     overhead than Map, but is faster with larger inputs and a CPU-intensive

@@ -170,7 +170,7 @@ func Filter[A any](fn func(A) bool, xs []A) []A {
 func DropWhile[A any](fn func(A) bool, xs []A) []A {
 	for i, x := range xs {
 		if !fn(x) {
-			return xs[i:]
+			return slices.Clone(xs[i:])
 		}
 	}
 	return []A{}
@@ -181,10 +181,10 @@ func DropWhile[A any](fn func(A) bool, xs []A) []A {
 func TakeWhile[A any](fn func(A) bool, xs []A) []A {
 	for i, x := range xs {
 		if !fn(x) {
-			return xs[:i]
+			return slices.Clone(xs[:i])
 		}
 	}
-	return xs
+	return slices.Clone(xs)
 }
 
 // ZipWith, applied to a combiner function and two slices, combines elements

@@ -446,12 +446,13 @@ func GroupBy[A comparable](eq func(A, A) bool, xs []A) [][]A {
 // DeleteBy removes the first occurrence of an element from a slice using an
 // equality predicate. The element type must be comparable.
 func DeleteBy[A comparable](eq func(A, A) bool, x A, xs []A) []A {
-	for i, y := range xs {
+	var ys = slices.Clone(xs)
+	for i, y := range ys {
 		if eq(x, y) {
-			return append(xs[:i], xs[i+1:]...)
+			return append(ys[:i], ys[i+1:]...)
 		}
 	}
-	return xs
+	return ys
 }
 
 // Returns the smallest integer greater than or equal to x/y

@@ -108,8 +108,8 @@ func Map[A, B any](fn func(A) B, xs []A) []B {
 	return ys
 }
 
-// MapMaybe applies a unary function, which can fail, to each element
-// of a slice, throws out any errors and returns the proper result values.
+// MapMaybe applies a unary function, which can fail, to each element of
+// a slice and discards results for which the function returns an error.
 func MapMaybe[A, B any](fn func(A) (B, error), xs []A) []B {
 	var ys = make([]B, 0)
 	for _, x := range xs {
@@ -374,7 +374,7 @@ func FindIndex[A comparable](fn func(A) bool, xs []A) (int, bool) {
 	return -1, false
 }
 
-// FindIndices, extends FindIndex, by returning the indices of all elements
+// FindIndices, extends FindIndex by returning the indices of all elements
 // satisfying the predicate, in ascending order. The element type must be
 // comparable.
 func FindIndices[A comparable](fn func(A) bool, xs []A) []int {

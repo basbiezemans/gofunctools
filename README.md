@@ -1,6 +1,10 @@
 # Go functools
 
-Package `gofunctools` provides generic higher-order functions. They can be used to compose functions in a concise way.
+Functional programming utilities, the Go way.
+
+Go isn't a functional language, but since Go 1.18 its generics and first-class functions make functional patterns both possible and practical. `gofunctools` fills the gap: it provides generic higher-order functions that let you compose functions in a concise way, without importing a framework or fighting the language.
+
+The library is deliberately idiomatic Go. It operates on slices — the language's primary data structure — and uses pure higher-order functions without Result types, monads, or other abstractions foreign to Go. You read and write it the way you'd write any other Go code.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/basbiezemans/gofunctools.svg)](https://pkg.go.dev/github.com/basbiezemans/gofunctools)
 [![Test](https://github.com/basbiezemans/gofunctools/actions/workflows/test.yml/badge.svg)](https://github.com/basbiezemans/gofunctools/actions/workflows/test.yml)
@@ -39,7 +43,7 @@ fmt.Println(sanitize(text))
 
 // Output: "lorem ipsum dolor sit amet consectetur"
 ```
-#### Sanitizer-tokenizer with Compose
+#### String sanitizer-tokenizer with Compose
 ```go
 replacer := strings.NewReplacer(",", "", ".", "")
 sanitize := Compose(strings.ToLower, replacer.Replace)

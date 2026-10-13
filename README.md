@@ -111,14 +111,14 @@ func length(s []int) int {
     return len(s)
 }
 
-// A slice of groups with consecutive equal elements
+// Groups with consecutive equal elements
 groups := GroupBy(equal, numbers)
 
-// Function maxLen returns the maximum group length
-maxLen := Compose(slices.Max, Partial1(Map, length))
+// The maximum group length
+maxLen := slices.Max(Map(length, groups))
 
 // Function eqMaxLen determines if len(group) == maxlen
-eqMaxLen := Compose(Partial1(equal, maxLen(groups)), length)
+eqMaxLen := Compose(Partial1(equal, maxLen), length)
 
 // Filter the groups and pick the first result
 firstMaxConsecutiveGroup := Filter(eqMaxLen, groups)[0]

@@ -356,9 +356,9 @@ func Count[A any](fn func(A) bool, xs []A) int {
 // input value as seed and returns (output, next-seed, ok). If ok is false,
 // the slice is complete; if ok is true, the output value is appended to the
 // slice and the seed value is used next.
-func Unfold[A, B any](fn func(B) (A, B, bool), initValue B) []A {
+func Unfold[A, B any](fn func(B) (A, B, bool), seedValue B) []A {
 	var xs = make([]A, 0)
-	var x, next, ok = fn(initValue)
+	var x, next, ok = fn(seedValue)
 	for ok {
 		xs = append(xs, x)
 		x, next, ok = fn(next)

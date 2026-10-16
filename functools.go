@@ -91,20 +91,21 @@ func ReduceRight[A any](fn func(A, A) A, xs []A) A {
 	return FoldRight(fn, xs[n], xs[:n])
 }
 
-// ParallelReduce, applied to a reducer function and a non-empty slice, reduces
-// the slice to a single value in parallel. This function is non-total and will
-// panic if the slice happens to be empty.
+// ParallelReduce, applied to a reducer function and a slice, reduces the slice
+// to a single value in parallel. The result is equivalent to Reduce only when
+// the reducer is associative.
 //   - The reducer function must be associative because the parallel
-//     implementation may change the grouping of values. It must also be safe
-//     for concurrent use.
-//   - A panic in the reducer function may terminate the program.
-func ParallelReduce[A any](fn func(A, A) A, xs []A) A {
+//     implementation may change the grouping of values.
+//   - The reducer function must not depend on shared mutable state.
+//   - An error is returned when the slice is empty or if the reducer panics.
+func ParallelReduce[A any](fn func(A, A) A, xs []A) (result A, err error) {
 	if len(xs) == 0 {
-		panic("empty slice")
+		return result, errors.New("empty slice")
 	}
 	var maxProcs = min(runtime.GOMAXPROCS(0)*4, len(xs))
 	var chunkSize = ceildiv(len(xs), maxProcs)
 	var chunkCount = ceildiv(len(xs), chunkSize)
+	var errCh = make(chan error, 1)
 	var slice = make([]A, chunkCount)
 	var index = 0
 	var wg sync.WaitGroup
@@ -112,12 +113,24 @@ func ParallelReduce[A any](fn func(A, A) A, xs []A) A {
 	for chunk := range slices.Chunk(xs, chunkSize) {
 		go func(chunk []A, chunkIndex int) {
 			defer wg.Done()
-			slice[chunkIndex] = ReduceLeft(fn, chunk)
+			if val, err := Reduce(fn, chunk); err == nil {
+				slice[chunkIndex] = val
+			} else {
+				select {
+				case errCh <- fmt.Errorf("reducer panicked: %v", err):
+				default: // don’t block on a full channel
+				}
+			}
 		}(chunk, index)
 		index++
 	}
 	wg.Wait()
-	return ReduceLeft(fn, slice)
+	select {
+	case err := <-errCh:
+		return result, err
+	default: // no panic to report
+	}
+	return Reduce(fn, slice)
 }
 
 // Map applies a unary function to each element of a slice.

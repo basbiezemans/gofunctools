@@ -128,30 +128,32 @@ func TestParallelReduce(t *testing.T) {
 		callb  func(int, int) int
 		input  []int
 		expect int
+		errMsg string
 	}
+	fail := func(x, y int) int { panic("boom!") }
 	testcases := []TestCase{
-		{add, []int{1}, 1},
-		{add, []int{1, 2}, 3},
-		{multiply, []int{2, 3, 4}, 24},
-		{add, makeRange(0, 10_001), 50_005_000},
+		{add, []int{}, 0, "empty slice"},
+		{add, []int{1}, 1, "n/a"},
+		{add, []int{1, 2}, 3, "n/a"},
+		{fail, []int{1, 2, 3}, 0, "reducer panicked"},
+		{multiply, []int{2, 3, 4}, 24, "n/a"},
+		{add, makeRange(0, 10_001), 50_005_000, "n/a"},
 	}
 	for _, tc := range testcases {
-		result := ParallelReduce(tc.callb, tc.input)
-		if result != tc.expect {
+		result, err := ParallelReduce(tc.callb, tc.input)
+		if err != nil && tc.errMsg == "n/a" {
+			errorMsg := "Reduce(%s, %s) = %d, %v; expected an error"
 			fname := funcName(tc.callb)
 			xs := sliceToString(tc.input, 5)
-			t.Errorf("Reduce(%s, %s) = %d, expected %d", fname, xs, result, tc.expect)
+			t.Errorf(errorMsg, fname, xs, result, err)
+		}
+		if result != tc.expect {
+			errorMsg := "Reduce(%s, %s) = %d, %v; expected %d, <nil>"
+			fname := funcName(tc.callb)
+			xs := sliceToString(tc.input, 5)
+			t.Errorf(errorMsg, fname, xs, result, err, tc.expect)
 		}
 	}
-}
-
-func TestParallelReduceEmptyPanics(t *testing.T) {
-	defer func() {
-		if recover() == nil {
-			t.Error("Reduce did not panic")
-		}
-	}()
-	ParallelReduce(add, []int{})
 }
 
 func TestFoldLeft(t *testing.T) {

@@ -72,6 +72,8 @@ func Reduce[A any](fn func(A, A) A, xs []A) (result A, err error) {
 // slice to a single value. The accumulated value must be of the same type as
 // the slice elements. This function is non-total and will panic if the slice
 // happens to be empty.
+//
+// Deprecated: Use Reduce or FoldLeft instead.
 func ReduceLeft[A any](fn func(A, A) A, xs []A) A {
 	if len(xs) == 0 {
 		panic("empty slice")
@@ -83,6 +85,8 @@ func ReduceLeft[A any](fn func(A, A) A, xs []A) A {
 // the slice to a single value. The accumulated value must be of the same type
 // as the slice elements. This function is non-total and will panic if the
 // slice happens to be empty.
+//
+// Deprecated: Use FoldRight instead.
 func ReduceRight[A any](fn func(A, A) A, xs []A) A {
 	if len(xs) == 0 {
 		panic("empty slice")

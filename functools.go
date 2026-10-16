@@ -2,6 +2,8 @@
 package functools
 
 import (
+	"errors"
+	"fmt"
 	"runtime"
 	"slices"
 	"sync"
@@ -45,6 +47,25 @@ func FoldRight[A, B any](fn func(A, B) B, initValue B, xs []A) B {
 		acc = fn(xs[n-i], acc)
 	}
 	return acc
+}
+
+// Reduce applies a reducer function left-to-right to a non-empty slice, starting
+// with the first element as the initial accumulator value. It returns the reduced
+// value, or an error when the slice is empty or if the reducer panics.
+func Reduce[A any](fn func(A, A) A, xs []A) (result A, err error) {
+	if len(xs) == 0 {
+		return result, errors.New("empty slice")
+	}
+	defer func() {
+		if rec := recover(); rec != nil {
+			err = fmt.Errorf("reducer panicked: %v", rec)
+		}
+	}()
+	var acc = xs[0]
+	for _, x := range xs[1:] {
+		acc = fn(acc, x)
+	}
+	return acc, nil
 }
 
 // ReduceLeft, applied to a reducer function and a non-empty slice, reduces the

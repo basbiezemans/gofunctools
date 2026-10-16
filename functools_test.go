@@ -59,6 +59,34 @@ func TestAll(t *testing.T) {
 	}
 }
 
+func TestReduce(t *testing.T) {
+	numbers := []int{1, 2, 3, 4}
+	expect := -8
+	result, err := Reduce(subtract, numbers)
+	errorMsg := "Reduce(subtract, %v) = %d, %v; expected %d, %v"
+	if result != expect {
+		t.Errorf(errorMsg, numbers, result, err, expect, nil)
+	}
+	numbers = []int{}
+	expect = 0
+	if result, err := Reduce(subtract, numbers); err == nil {
+		t.Errorf(errorMsg, numbers, result, err, expect, "empty slice")
+	}
+	fail := func(x, y int) int {
+		if y != 2 {
+			return x + y
+		} else {
+			panic("panic test")
+		}
+	}
+	errorMsg = "Reduce(fail, %v) = %d, %v; expected %d, %v"
+	numbers = []int{1, 2, 3}
+	expect = 0
+	if result, err := Reduce(fail, numbers); err == nil {
+		t.Errorf(errorMsg, numbers, result, err, expect, "reducer panicked")
+	}
+}
+
 func TestReduceLeft(t *testing.T) {
 	numbers := []int{1, 2, 3, 4}
 	expect := -8

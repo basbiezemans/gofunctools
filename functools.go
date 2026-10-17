@@ -62,8 +62,9 @@ func Reduce[A any](fn func(A, A) A, xs []A) (result A, err error) {
 		}
 	}()
 	var acc = xs[0]
-	for _, x := range xs[1:] {
-		acc = fn(acc, x)
+	var n = len(xs)
+	for i := 1; i < n; i++ {
+		acc = fn(acc, xs[i])
 	}
 	return acc, nil
 }

@@ -31,8 +31,8 @@ func All[A any](fn func(A) bool, xs []A) bool {
 // to right, starting with the initialization value.
 func FoldLeft[A, B any](fn func(B, A) B, initValue B, xs []A) B {
 	var acc = initValue
-	for _, x := range xs {
-		acc = fn(acc, x)
+	for i := range xs {
+		acc = fn(acc, xs[i])
 	}
 	return acc
 }

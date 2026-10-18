@@ -52,9 +52,9 @@ func FoldRight[A, B any](fn func(A, B) B, initValue B, xs []A) B {
 // Reduce applies a reducer function left-to-right to a non-empty slice, starting
 // with the first element as the initial accumulator value. It returns the reduced
 // value, or an error when the slice is empty or if the reducer panics.
-func Reduce[A any](fn func(A, A) A, xs []A) (result A, err error) {
+func Reduce[A any](fn func(A, A) A, xs []A) (val A, err error) {
 	if len(xs) == 0 {
-		return result, errors.New("empty slice")
+		return val, errors.New("empty slice")
 	}
 	defer func() {
 		if rec := recover(); rec != nil {
@@ -103,9 +103,9 @@ func ReduceRight[A any](fn func(A, A) A, xs []A) A {
 //     implementation may change the grouping of values.
 //   - The reducer function must not depend on shared mutable state.
 //   - An error is returned when the slice is empty or if the reducer panics.
-func ParallelReduce[A any](fn func(A, A) A, xs []A) (result A, err error) {
+func ParallelReduce[A any](fn func(A, A) A, xs []A) (val A, err error) {
 	if len(xs) == 0 {
-		return result, errors.New("empty slice")
+		return val, errors.New("empty slice")
 	}
 	var maxProcs = min(runtime.GOMAXPROCS(0)*4, len(xs))
 	var chunkSize = ceildiv(len(xs), maxProcs)
@@ -132,7 +132,7 @@ func ParallelReduce[A any](fn func(A, A) A, xs []A) (result A, err error) {
 	wg.Wait()
 	select {
 	case err := <-errCh:
-		return result, err
+		return val, err
 	default: // no panic to report
 	}
 	return Reduce(fn, slice)

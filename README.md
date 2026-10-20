@@ -32,6 +32,19 @@ import fn github.com/basbiezemans/gofunctools
 
 ## Examples
 
+#### Running totals with ScanLeft
+```go
+changes := []int{25, -20, 30}
+balances := ScanLeft(
+    func(balance, change int) int { return balance + change },
+    100,
+    changes,
+)
+
+fmt.Println(balances)
+
+// Output: [100, 125, 105, 135]
+```
 #### String sanitizer with Pipe
 ```go
 replacer := strings.NewReplacer(",", "", ".", "")
@@ -125,5 +138,5 @@ firstMaxConsecutiveGroup := Filter(eqMaxLen, groups)[0]
 
 fmt.Println(firstMaxConsecutiveGroup)
 
-// Output: [3 3 3]
+// Output: [3, 3, 3]
 ```

@@ -147,9 +147,14 @@ func Map[A, B any](fn func(A) B, xs []A) []B {
 	return ys
 }
 
-// MapMaybe applies a unary function, which can fail, to each element of
-// a slice and discards results for which the function returns an error.
+// Deprecated: Use FilterMap instead.
 func MapMaybe[A, B any](fn func(A) (B, error), xs []A) []B {
+	return FilterMap(fn, xs)
+}
+
+// FilterMap applies a unary function, which can fail, to elements of
+// a slice and discards values for which the function returns an error.
+func FilterMap[A, B any](fn func(A) (B, error), xs []A) []B {
 	var ys = make([]B, 0)
 	for _, x := range xs {
 		if y, err := fn(x); err == nil {

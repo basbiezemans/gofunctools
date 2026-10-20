@@ -758,6 +758,21 @@ func TestDeleteBy(t *testing.T) {
 	}
 }
 
+func TestValOrDefault(t *testing.T) {
+	getVal := ValOrDefault(0)
+	expect := 0
+	result := getVal(Reduce(add, []int{}))
+	if result != expect {
+		t.Errorf("ValOrDefault(0)(Reduce(add, [])) = %d, expected %d", result, expect)
+	}
+	input := []int{1, 2, 3}
+	expect = 6
+	result = getVal(Reduce(add, input))
+	if result != expect {
+		t.Errorf("ValOrDefault(0)(Reduce(add, %v)) = %d, expected %d", input, result, expect)
+	}
+}
+
 // Helper functions
 
 func even(x int) bool {

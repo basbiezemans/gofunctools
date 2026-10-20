@@ -516,6 +516,19 @@ func DeleteBy[A comparable](eq func(A, A) bool, x A, xs []A) []A {
 	return ys
 }
 
+// ValOrDefault returns a function that, given a value and an error, returns the
+// value when the error is nil; otherwise it returns the default value supplied
+// to ValOrDefault.
+func ValOrDefault[T any](defaultVal T) func(T, error) T {
+	return func(val T, err error) T {
+		if err == nil {
+			return val
+		} else {
+			return defaultVal
+		}
+	}
+}
+
 // Returns the smallest integer greater than or equal to x/y
 // Example: 7/3 = (7 + 3 − 1) / 3 = 9/3 = 3
 func ceildiv(x, y int) int {

@@ -122,7 +122,7 @@ func ParallelReduce[A any](fn func(A, A) A, xs []A) (val A, err error) {
 				slice[chunkIndex] = val
 			} else {
 				select {
-				case errCh <- fmt.Errorf("reducer panicked: %v", err):
+				case errCh <- err:
 				default: // don’t block on a full channel
 				}
 			}

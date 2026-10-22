@@ -87,42 +87,6 @@ func TestReduce(t *testing.T) {
 	}
 }
 
-func TestReduceLeft(t *testing.T) {
-	numbers := []int{1, 2, 3, 4}
-	expect := -8
-	result := ReduceLeft(subtract, numbers)
-	if result != expect {
-		t.Errorf("ReduceLeft(subtract, %v) = %d, expected %d", numbers, result, expect)
-	}
-}
-
-func TestReduceLeftEmptyPanics(t *testing.T) {
-	defer func() {
-		if recover() == nil {
-			t.Error("ReduceLeft did not panic")
-		}
-	}()
-	ReduceLeft(subtract, []int{})
-}
-
-func TestReduceRight(t *testing.T) {
-	numbers := []int{1, 2, 3, 4}
-	expect := -2
-	result := ReduceRight(subtract, numbers)
-	if result != expect {
-		t.Errorf("ReduceRight(subtract, %v) = %d, expected %d", numbers, result, expect)
-	}
-}
-
-func TestReduceRightEmptyPanics(t *testing.T) {
-	defer func() {
-		if recover() == nil {
-			t.Error("ReduceRight did not panic")
-		}
-	}()
-	ReduceRight(subtract, []int{})
-}
-
 func TestParallelReduce(t *testing.T) {
 	type TestCase struct {
 		callb  func(int, int) int

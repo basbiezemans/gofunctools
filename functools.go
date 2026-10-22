@@ -69,33 +69,6 @@ func Reduce[A any](fn func(A, A) A, xs []A) (val A, err error) {
 	return acc, nil
 }
 
-// ReduceLeft, applied to a reducer function and a non-empty slice, reduces the
-// slice to a single value. The accumulated value must be of the same type as
-// the slice elements. This function is non-total and will panic if the slice
-// happens to be empty.
-//
-// Deprecated: Use Reduce or FoldLeft instead.
-func ReduceLeft[A any](fn func(A, A) A, xs []A) A {
-	if len(xs) == 0 {
-		panic("empty slice")
-	}
-	return FoldLeft(fn, xs[0], xs[1:])
-}
-
-// ReduceRight, applied to a reducer function and a non-empty slice, reduces
-// the slice to a single value. The accumulated value must be of the same type
-// as the slice elements. This function is non-total and will panic if the
-// slice happens to be empty.
-//
-// Deprecated: Use FoldRight instead.
-func ReduceRight[A any](fn func(A, A) A, xs []A) A {
-	if len(xs) == 0 {
-		panic("empty slice")
-	}
-	var n = len(xs) - 1
-	return FoldRight(fn, xs[n], xs[:n])
-}
-
 // ParallelReduce, applied to a reducer function and a slice, reduces the slice
 // to a single value in parallel. The result is equivalent to Reduce only when
 // the reducer is associative.

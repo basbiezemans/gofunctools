@@ -25,7 +25,7 @@ Then import the library in your Go code with:
 import . github.com/basbiezemans/gofunctools
 
 // With a short import alias
-import fn github.com/basbiezemans/gofunctools
+import funcs github.com/basbiezemans/gofunctools
 ```
 
 ## Package overview
@@ -66,9 +66,9 @@ fmt.Println(wordfreq)
 // Output: map[apple:2 banana:2 grapes:1 kiwi:1 mango:1 pear:2]
 ```
 ### Transformations and filtering
-Map, Filter, FilterMap, ConcatMap, Partition, UnzipWith, and ZipWith make common slice transformations more concise.
+Map, Filter, FilterMap, TryMap, ConcatMap, Partition, UnzipWith, and ZipWith make common slice transformations more concise. Use TryMap when any mapping error should stop the operation, and FilterMap when values whose mapping fails should be skipped.
 
-Example: Filtering and transforming numbers with Filter, Map
+Example 1: Filtering and transforming numbers with Filter, Map
 ```go
 numbers := []int{1, 2, 3, 4, 5, 6}
 
@@ -81,6 +81,14 @@ squares := Map(square, evens)
 fmt.Println(squares)
 
 // Output: [4 16 36]
+```
+Example 2: Error-aware mapping with TryMap, FilterMap
+```go
+values, err := TryMap(strconv.Atoi, []string{"10", "20"})
+// values: [10 20], err: nil
+
+values := FilterMap(strconv.Atoi, []string{"10", "NaN", "20"})
+// values: [10 20]
 ```
 ### Composition and currying
 Pipe, Compose, Curry1, Curry2, Curry3, Partial1, Partial2, Flip, and Rotate help build reusable function pipelines in a style that fits Go's function values. These helpers let you compose functions and partially apply arguments to build reusable data-processing pipelines.

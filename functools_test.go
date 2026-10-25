@@ -772,10 +772,7 @@ func greaterThan(y int) func(int) bool {
 }
 
 func decrement(x int) (int, int, bool) {
-	if x > 0 {
-		return x, x - 1, true
-	}
-	return 0, -1, false
+	return x, x - 1, x > 0
 }
 
 // Creates a slice containing a range of integers. The range is a half-open

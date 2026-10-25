@@ -80,7 +80,7 @@ func ParallelReduce[A any](fn func(A, A) A, xs []A) (val A, err error) {
 	if len(xs) == 0 {
 		return val, errors.New("empty slice")
 	}
-	var maxProcs = min(runtime.GOMAXPROCS(0)*4, len(xs))
+	var maxProcs = min(runtime.GOMAXPROCS(0), len(xs))
 	var chunkSize = ceildiv(len(xs), maxProcs)
 	var chunkCount = ceildiv(len(xs), chunkSize)
 	var errCh = make(chan error, 1)
@@ -164,7 +164,7 @@ func ParallelMap[A, B any](fn func(A) B, xs []A) []B {
 	if len(xs) == 0 {
 		return []B{}
 	}
-	var maxProcs = min(runtime.GOMAXPROCS(0)*4, len(xs))
+	var maxProcs = min(runtime.GOMAXPROCS(0), len(xs))
 	var chunkSize = ceildiv(len(xs), maxProcs)
 	var chunkCount = ceildiv(len(xs), chunkSize)
 	var slice = make([]B, len(xs))

@@ -95,13 +95,11 @@ Pipe, Compose, Curry1, Curry2, Curry3, Partial1, Partial2, Flip, and Rotate help
 
 Example 1: Data transformation pipeline with Pipe
 ```go
-text := "... LOREM IPSUM, dolor sit amet, consectetur ...  "
-
 replacer := strings.NewReplacer(",", "", ".", "")
 
 normalize := Pipe(replacer.Replace, strings.TrimSpace, strings.ToLower)
 
-fmt.Println(normalize(text))
+fmt.Println(normalize("... LOREM IPSUM, dolor sit amet, consectetur ...  "))
 
 // Output: lorem ipsum dolor sit amet consectetur
 ```
@@ -109,15 +107,15 @@ Example 2: Building a complex function with Compose, Partial1, Partial2
 ```go
 numbers := []int{1, 2, 3, 4, 5, 6}
 
-isEven := func(n int) bool { return n%2 == 0 }
 square := func(n int) int { return n * n }
+even := func(n int) bool { return n%2 == 0 }
 add := func(total, n int) int { return total + n }
 
 sumSquaresOfEven := Compose(
     Partial2(FoldLeft, add, 0),
     Compose(
         Partial1(Map, square),
-        Partial1(Filter, isEven),
+        Partial1(Filter, even),
     ),
 )
 

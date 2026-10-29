@@ -190,7 +190,7 @@ func ParallelMap[A, B any](fn func(A) B, xs []A) []B {
 // Filter, applied to a predicate and a slice, filters the slice of those
 // elements that satisfy the predicate.
 func Filter[A any](fn func(A) bool, xs []A) []A {
-	var ys = make([]A, 0, len(xs)/2)
+	var ys = make([]A, 0)
 	for _, x := range xs {
 		if fn(x) {
 			ys = append(ys, x)
@@ -345,8 +345,8 @@ func Rotate[A, B, C, D any](fn func(A, B, C) D) func(B, C, A) D {
 // Partition takes a predicate and a slice, and splits the elements into two
 // slices which do and do not satisfy the predicate.
 func Partition[A any](fn func(A) bool, xs []A) ([]A, []A) {
-	var ys = make([]A, 0, len(xs)/2)
-	var zs = make([]A, 0, len(xs)/2)
+	var ys = make([]A, 0)
+	var zs = make([]A, 0)
 	for _, x := range xs {
 		if fn(x) {
 			ys = append(ys, x)
@@ -447,7 +447,7 @@ func ScanRight[A, B any](fn func(A, B) B, initValue B, xs []A) []B {
 // ConcatMap applies a function, returning a slice, over a slice and concatenates
 // the results.
 func ConcatMap[A, B any](fn func(A) []B, xs []A) []B {
-	var ys = make([]B, 0, len(xs))
+	var ys = make([]B, 0)
 	for _, x := range xs {
 		ys = append(ys, fn(x)...)
 	}
